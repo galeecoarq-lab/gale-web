@@ -1,0 +1,21 @@
+---
+import '../styles/global.css';
+import Counter from '../components/Counter.tsx';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body>
+		<main class="min-h-screen flex flex-col items-center justify-center gap-8">
+			<h1 class="text-5xl font-bold text-blue-600">Astro</h1>
+			<Counter client:load />
+		</main>
+	</body>
+</html>

@@ -1,0 +1,187 @@
+---
+/**
+ * Full-bleed hero carousel a-la-Lightship: large background image
+ * with auto-cycle slides, gradient overlay, headline, subhead, CTAs.
+ *
+ * Slides are passed in via props so the component is reusable for
+ * any landing page.
+ */
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { heroSlides } from '../../data/site';
+
+interface Slide {
+  image: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+}
+
+interface Props {
+  slides?: Slide[];
+  /** Autoplay interval (ms). 0 disables autoplay. */
+  interval?: number;
+}
+
+const { slides = heroSlides, interval = 6500 } = Astro.props;
+---
+
+<section
+  class="relative isolate min-h-[100svh] w-full overflow-hidden bg-[var(--color-negro)] text-[var(--color-cultivado)]"
+  data-hero
+  data-interval={String(interval)}
+  aria-roledescription="carrusel"
+  aria-label="Proyectos destacados"
+>
+  {/* Slides */}
+  {slides.map((slide, idx) => (
+    <article
+      class="absolute inset-0 transition-opacity duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] opacity-0 data-[active=true]:opacity-100"
+      data-slide={idx}
+      data-active={idx === 0 ? 'true' : 'false'}
+      aria-roledescription="slide"
+      aria-label={`Slide ${idx + 1} de ${slides.length}`}
+      aria-hidden={idx === 0 ? 'false' : 'true'}
+    >
+      <div class="absolute inset-0 ken-burns">
+        <img
+          src={slide.image}
+          alt=""
+          class="h-full w-full object-cover"
+          loading={idx === 0 ? 'eager' : 'lazy'}
+          decoding={idx === 0 ? 'sync' : 'async'}
+          fetchpriority={idx === 0 ? 'high' : 'auto'}
+        />
+      </div>
+      {/* Layered overlays for legibility */}
+      <div class="absolute inset-0 bg-gradient-to-b from-[var(--color-negro)]/65 via-[var(--color-negro)]/35 to-[var(--color-negro)]/95" aria-hidden="true" />
+      <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-negro)]/40 via-transparent to-[var(--color-negro)]/30" aria-hidden="true" />
+      <div class="absolute inset-0 bg-[var(--color-negro)]/20 mix-blend-multiply" aria-hidden="true" />
+    </article>
+  ))}
+
+  {/* Content */}
+  <div class="relative z-10 min-h-[100svh] flex flex-col">
+    <div class="flex-1 flex items-end pb-24 sm:pb-28 lg:pb-32 pt-32">
+      <div class="container-wide w-full">
+
+        {slides.map((slide, idx) => (
+          <div
+            class="opacity-0 transition-opacity duration-700 data-[active=true]:opacity-100 data-[active=false]:pointer-events-none data-[active=false]:absolute data-[active=false]:inset-x-[clamp(1.25rem,4vw,3rem)]"
+            data-slide-content={idx}
+            data-active={idx === 0 ? 'true' : 'false'}
+          >
+            <Eyebrow class="text-[var(--color-niebla)] reveal" data-visible="true">{slide.eyebrow}</Eyebrow>
+            <h1 class="display-2xl mt-5 max-w-[16ch] text-balance">
+              {slide.title}<br /><span class="text-[var(--color-niebla)]">{slide.subtitle}</span>
+            </h1>
+
+            <div class="grid lg:grid-cols-[1fr_minmax(280px,420px)] gap-8 lg:gap-16 mt-10 lg:mt-14 items-end">
+              <div class="hidden lg:block" aria-hidden="true"></div>
+
+              <div class="flex flex-col gap-6">
+                <p class="text-base sm:text-lg leading-relaxed text-[var(--color-niebla)]">
+                  {slide.description}
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                  <Button href={slide.primaryCta.href} variant="primary" class="bg-[var(--color-cultivado)] text-[var(--color-negro)] hover:bg-[var(--color-azul)] hover:text-[var(--color-cultivado)]">
+                    {slide.primaryCta.label}
+                  </Button>
+                  {slide.secondaryCta && (
+                    <Button href={slide.secondaryCta.href} variant="ghost" icon={false}>
+                      {slide.secondaryCta.label}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Bottom bar: pagination dots + scroll hint */}
+    <div class="relative z-20 pb-8 lg:pb-12">
+      <div class="container-wide flex items-end justify-between gap-6">
+        <div class="flex items-center gap-3" role="tablist" aria-label="Slides">
+          {slides.map((_, idx) => (
+            <button
+              type="button"
+              class="group h-[3px] cursor-pointer overflow-hidden rounded-full bg-[var(--color-cultivado)]/25 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] w-7 data-[active=true]:w-16"
+              data-dot={idx}
+              data-active={idx === 0 ? 'true' : 'false'}
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+              aria-label={`Ir al slide ${idx + 1}`}
+            >
+              <span class="block h-full w-0 bg-[var(--color-cultivado)] transition-all duration-[6500ms] ease-linear group-data-[active=true]:w-full" data-dot-fill></span>
+            </button>
+          ))}
+        </div>
+
+        <a
+          href="#estudio"
+          class="hidden md:inline-flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-[var(--color-cultivado)]/80 hover:text-[var(--color-cultivado)] transition-colors duration-200"
+        >
+          <span>Scroll para explorar</span>
+          <span class="inline-block h-10 w-px bg-[var(--color-cultivado)]/40 animate-pulse" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) {
+    const interval = Number(hero.dataset.interval ?? 6500);
+    const slides = hero.querySelectorAll<HTMLElement>('[data-slide]');
+    const contents = hero.querySelectorAll<HTMLElement>('[data-slide-content]');
+    const dots = hero.querySelectorAll<HTMLElement>('[data-dot]');
+    let index = 0;
+    let timer: number | undefined;
+
+    function go(next: number) {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((el, i) => {
+        const active = i === index;
+        el.dataset.active = String(active);
+        el.setAttribute('aria-hidden', String(!active));
+      });
+      contents.forEach((el, i) => (el.dataset.active = String(i === index)));
+      dots.forEach((el, i) => {
+        el.dataset.active = String(i === index);
+        el.setAttribute('aria-selected', String(i === index));
+      });
+    }
+
+    function start() {
+      if (!interval) return;
+      stop();
+      timer = window.setInterval(() => go(index + 1), interval);
+    }
+    function stop() {
+      if (timer) window.clearInterval(timer);
+    }
+
+    dots.forEach((dot) =>
+      dot.addEventListener('click', () => {
+        const i = Number(dot.dataset.dot);
+        go(i);
+        start();
+      })
+    );
+
+    // Pause on hover (desktop) / when tab not visible
+    hero.addEventListener('mouseenter', stop);
+    hero.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', () => {
+      document.hidden ? stop() : start();
+    });
+
+    start();
+  }
+</script>

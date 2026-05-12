@@ -1,0 +1,27 @@
+---
+/**
+ * "Lo que hacemos" — visual gallery of recent work.
+ * A six-image strip where each tile expands on hover, replacing the
+ * previous numbered services list.
+ */
+import ImageGallery from '../ui/image-gallery.tsx';
+
+const items = [
+  { src: '/images/projects/foto-01.webp', alt: 'Proyecto residencial — fachada' },
+  { src: '/images/projects/foto-02.webp', alt: 'Proyecto corporativo — interior' },
+  { src: '/images/projects/foto-03.webp', alt: 'Oficinas Cerúlea Studio' },
+  { src: '/images/projects/foto-04.webp', alt: 'Interiorismo residencial' },
+  { src: '/images/projects/foto-05.webp', alt: 'Remodelación de vivienda' },
+  { src: '/images/projects/foto-06.webp', alt: 'Proyecto turístico' },
+];
+---
+
+<section id="servicios" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)]">
+  <ImageGallery
+    client:visible
+    eyebrow="Lo que hacemos"
+    title="Nuestras creaciones más recientes."
+    description="Una colección visual de nuestros trabajos — cada espacio diseñado con intención, materialidad honesta y sensibilidad por el lugar."
+    items={items}
+  />
+</section>

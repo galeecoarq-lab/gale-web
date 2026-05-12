@@ -1,0 +1,58 @@
+---
+/**
+ * Process section — vertical numbered steps with a sticky
+ * intro on the left (desktop). Reads like an editorial column.
+ */
+import { process } from '../../data/site';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+interface Step {
+  step: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  items?: Step[];
+}
+
+const { items = process } = Astro.props;
+---
+
+<section id="proceso" class="section bg-[var(--color-cascara)] text-[var(--color-negro)]">
+  <div class="container-wide">
+    <div class="grid lg:grid-cols-[1fr_1.5fr] gap-12 lg:gap-24">
+
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        <Reveal><Eyebrow>Cómo trabajamos</Eyebrow></Reveal>
+        <Reveal delay={100} as="h2" class="display-xl mt-6 text-balance">
+          Un proceso claro y a la medida.
+        </Reveal>
+        <Reveal delay={200} as="p" class="mt-8 max-w-md text-base lg:text-lg leading-relaxed text-[var(--color-negro)]/70">
+          Desde la primera conversación hasta la entrega, te acompañamos paso a paso. Diseñamos con rigor y construimos con detalle, asegurando que el resultado cumpla y emocione.
+        </Reveal>
+      </div>
+
+      <ol class="space-y-px">
+        {items.map((step, idx) => (
+          <Reveal
+            delay={(idx * 100) as 0|100|200|300}
+            as="li"
+            class="grid grid-cols-[auto_1fr] gap-6 sm:gap-10 py-10 border-t border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] last:border-b"
+          >
+            <span class="text-sm font-semibold tabular-nums tracking-[0.18em] text-[var(--color-azul)] pt-2">
+              {step.step}
+            </span>
+            <div>
+              <h3 class="display-md text-balance">{step.title}</h3>
+              <p class="mt-4 text-base leading-relaxed text-[var(--color-negro)]/75 max-w-prose">
+                {step.description}
+              </p>
+            </div>
+          </Reveal>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

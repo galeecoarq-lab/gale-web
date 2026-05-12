@@ -1,0 +1,36 @@
+---
+/**
+ * Asymmetric image mosaic with smooth-scroll parallax — a central image
+ * contracts open as the user scrolls past, while four project tiles drift
+ * by at staggered rates. Replaces the previous static bento grid.
+ */
+import { showcaseGrid } from '../../data/site';
+import ImageMosaicParallax from '../ui/image-mosaic-parallax.tsx';
+
+interface Item {
+  image: string;
+  label: string;
+}
+
+interface Props {
+  items?: Item[];
+  heroImage?: string;
+  statementLine1?: string;
+  statementLine2?: string;
+}
+
+const {
+  items = showcaseGrid,
+  heroImage = '/images/events/event-hero.webp',
+  statementLine1,
+  statementLine2,
+} = Astro.props;
+---
+
+<ImageMosaicParallax
+  client:visible
+  items={items}
+  heroImage={heroImage}
+  statementLine1={statementLine1}
+  statementLine2={statementLine2}
+/>

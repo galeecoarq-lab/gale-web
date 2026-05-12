@@ -1,0 +1,44 @@
+---
+/**
+ * Official GALE imagotipo — transparent PNG (blue marks, no bg).
+ *
+ *   tone="light" (default) → blue logo on transparent, sits on cream surfaces
+ *   tone="dark"            → CSS-filtered to cream/white, sits on dark surfaces
+ *
+ * No chip, no card — just the mark.
+ */
+interface Props {
+  tone?: 'light' | 'dark';
+  class?: string;
+  href?: string;
+  /** Height in px. Logo aspect ~ 1.2:1 landscape. */
+  height?: number;
+}
+
+const {
+  tone = 'light',
+  class: className = '',
+  href = '/',
+  height = 36,
+} = Astro.props;
+
+/* On dark surfaces, recolor blue → cream/cultivado via filter chain.
+   filter formula tuned to land near #F7F6F4. */
+const darkFilter =
+  'brightness(0) saturate(100%) invert(98%) sepia(3%) saturate(380%) hue-rotate(341deg) brightness(99%) contrast(96%)';
+---
+
+<a
+  href={href}
+  class={`inline-flex items-center group ${className}`}
+  aria-label="GALE — Inicio"
+>
+  <img
+    src="/images/brand/logo-blue-transparent.webp"
+    alt="GALE"
+    decoding="async"
+    fetchpriority="high"
+    class="block transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-[3deg]"
+    style={`height:${height}px; width:auto; ${tone === 'dark' ? `filter: ${darkFilter};` : ''}`}
+  />
+</a>

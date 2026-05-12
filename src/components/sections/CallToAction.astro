@@ -1,0 +1,54 @@
+---
+/**
+ * Closing CTA — full-bleed dark panel with large statement and primary CTA.
+ * Lightship's equivalent is the "Closer Look" / "Mission Statement" section.
+ */
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Reveal from '../ui/Reveal.astro';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  image?: string;
+}
+
+const {
+  eyebrow = 'Conversemos',
+  title = 'Cada proyecto empieza por una buena conversación.',
+  description = 'Cuéntanos qué tienes en mente. Coordinamos una primera reunión sin compromiso para entender tu visión y proponerte un camino.',
+  ctaLabel = 'Inicia tu proyecto',
+  ctaHref = '#contacto',
+  image = '/images/projects/casita-del-pan.webp',
+} = Astro.props;
+---
+
+<section id="contacto" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)] relative overflow-hidden">
+  <div class="absolute inset-0 opacity-25" aria-hidden="true">
+    <img src={image} alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+    <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-negro)]/95 via-[var(--color-negro)]/80 to-[var(--color-negro)]/40"></div>
+  </div>
+
+  <div class="container-wide relative">
+    <div class="max-w-3xl">
+      <Reveal><Eyebrow class="text-[var(--color-niebla)]">{eyebrow}</Eyebrow></Reveal>
+      <Reveal delay={100} as="h2" class="display-2xl mt-6 text-balance">
+        {title}
+      </Reveal>
+      <Reveal delay={200} as="p" class="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-[var(--color-niebla)]">
+        {description}
+      </Reveal>
+      <Reveal delay={300} class="mt-10 flex flex-wrap items-center gap-3">
+        <Button href={ctaHref} variant="primary" class="bg-[var(--color-cultivado)] text-[var(--color-negro)] hover:bg-[var(--color-azul)] hover:text-[var(--color-cultivado)]">
+          {ctaLabel}
+        </Button>
+        <Button href="mailto:contacto@gale.pe" variant="ghost" icon={false}>
+          Escríbenos un correo
+        </Button>
+      </Reveal>
+    </div>
+  </div>
+</section>

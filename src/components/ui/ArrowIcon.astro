@@ -1,0 +1,19 @@
+---
+interface Props {
+  class?: string;
+  /** "right" | "down-right" */
+  variant?: 'right' | 'down-right';
+}
+const { class: className = 'w-4 h-4', variant = 'right' } = Astro.props;
+---
+{variant === 'right' ? (
+  <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M5 12h14" />
+    <path d="m13 5 7 7-7 7" />
+  </svg>
+) : (
+  <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M7 7h10v10" />
+    <path d="M7 17 17 7" />
+  </svg>
+)}

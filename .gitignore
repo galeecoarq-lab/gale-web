@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# image originals (kept locally for re-encoding; webp versions are committed)
+public/images/_originals/

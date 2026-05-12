@@ -1,0 +1,247 @@
+---
+/**
+ * Horizontal-scroll carousel of sector cards.
+ * On md+ the section is pinned and page scroll drives the horizontal travel;
+ * on mobile it falls back to native horizontal snap-scroll.
+ */
+import { sectors } from '../../data/site';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+interface Sector {
+  title: string;
+  image: string;
+  count: string;
+}
+
+interface Props {
+  items?: Sector[];
+}
+
+const { items = sectors } = Astro.props;
+---
+
+<section id="proyectos" class="sectors-pin relative bg-[var(--color-cultivado)]" data-sectors-pin>
+  <div class="sectors-sticky">
+    <div class="sectors-inner">
+      <div class="container-wide">
+        <div class="flex items-end justify-between gap-6 mb-8 lg:mb-10">
+          <div class="max-w-2xl">
+            <Reveal><Eyebrow>Sectores</Eyebrow></Reveal>
+            <Reveal delay={100} as="h2" class="display-xl mt-6 text-balance">
+              Diseñamos para cada<br />tipo de proyecto.
+            </Reveal>
+          </div>
+
+          <Reveal delay={200} class="hidden md:flex items-center gap-2">
+            <button
+              type="button"
+              class="w-12 h-12 rounded-full border border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] hover:bg-[var(--color-negro)] hover:text-[var(--color-cultivado)] transition-colors duration-200 cursor-pointer inline-flex items-center justify-center"
+              data-scroll="prev" aria-label="Anterior"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"/></svg>
+            </button>
+            <button
+              type="button"
+              class="w-12 h-12 rounded-full border border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] hover:bg-[var(--color-negro)] hover:text-[var(--color-cultivado)] transition-colors duration-200 cursor-pointer inline-flex items-center justify-center"
+              data-scroll="next" aria-label="Siguiente"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+            </button>
+          </Reveal>
+        </div>
+      </div>
+
+      <div class="sectors-track-wrap" data-scroll-container>
+        <div class="sectors-track" data-sectors-track>
+          {items.map((sector) => (
+            <article class="sectors-card snap-start group/sector relative shrink-0 overflow-hidden img-zoom rounded-3xl cursor-pointer">
+              <img
+                src={sector.image}
+                alt={`Proyectos del sector ${sector.title}`}
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-negro)]/85 via-[var(--color-negro)]/15 to-transparent" aria-hidden="true"></div>
+              <div class="absolute inset-x-0 bottom-0 p-6 lg:p-8 text-[var(--color-cultivado)] flex items-end justify-between">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.2em] text-[var(--color-niebla)] mb-3">{sector.count}</p>
+                  <h3 class="display-md leading-none">{sector.title}</h3>
+                </div>
+                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-cultivado)] text-[var(--color-negro)] translate-y-0 group-hover/sector:-translate-y-1 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg>
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .sectors-pin { position: relative; }
+
+  .sectors-inner {
+    padding-block: var(--section-py);
+  }
+
+  .sectors-card {
+    aspect-ratio: 4 / 5;
+    width: 72vw;
+  }
+
+  @media (min-width: 640px) {
+    .sectors-card { width: 50vw; }
+  }
+
+  .sectors-track-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    /* Anchor every card's snap point to the same inset as the section title,
+       so cards don't jump flush to the screen edge after the first one. */
+    scroll-padding-left: clamp(1.25rem, 4vw, 3rem);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+  }
+  .sectors-track-wrap::-webkit-scrollbar { display: none; }
+
+  .sectors-track {
+    display: flex;
+    gap: 1rem;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+    padding-bottom: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .sectors-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sectors-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding-block: 0;
+      padding-top: clamp(3.5rem, 7vh, 5.5rem);
+      padding-bottom: clamp(2rem, 4vh, 3.5rem);
+    }
+    .sectors-track-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      scroll-snap-type: none;
+      touch-action: auto;
+      overscroll-behavior-x: auto;
+    }
+    .sectors-track {
+      gap: clamp(1.25rem, 2vw, 2.25rem);
+      padding-inline: clamp(2rem, 5vw, 5rem);
+      will-change: transform;
+      transform: translate3d(0, 0, 0);
+    }
+    .sectors-card {
+      width: auto;
+      height: clamp(360px, 56vh, 540px);
+    }
+  }
+</style>
+
+<script>
+  type PinState = {
+    pin: HTMLElement;
+    track: HTMLElement;
+    wrap: HTMLElement;
+    maxX: number;
+    total: number;
+  };
+
+  const pin = document.querySelector<HTMLElement>('[data-sectors-pin]');
+  const track = document.querySelector<HTMLElement>('[data-sectors-track]');
+  const wrap = document.querySelector<HTMLElement>('[data-scroll-container]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-scroll="prev"]');
+  const next = document.querySelector<HTMLButtonElement>('[data-scroll="next"]');
+
+  const mq = window.matchMedia('(min-width: 768px)');
+  const state: PinState | null = pin && track && wrap ? { pin, track, wrap, maxX: 0, total: 0 } : null;
+  let rafId: number | null = null;
+
+  function configure() {
+    if (!state) return;
+    if (!mq.matches) {
+      state.pin.style.height = '';
+      state.track.style.transform = '';
+      state.maxX = 0;
+      state.total = 0;
+      return;
+    }
+    const maxX = Math.max(0, state.track.scrollWidth - state.wrap.clientWidth);
+    state.maxX = maxX;
+    state.total = maxX;
+    state.pin.style.height = `${window.innerHeight + maxX}px`;
+    update();
+  }
+
+  function update() {
+    if (!state || !mq.matches) return;
+    const rect = state.pin.getBoundingClientRect();
+    const scrolled = Math.min(Math.max(-rect.top, 0), state.total);
+    const progress = state.total > 0 ? scrolled / state.total : 0;
+    state.track.style.transform = `translate3d(${-progress * state.maxX}px, 0, 0)`;
+  }
+
+  function onScroll() {
+    if (rafId !== null) return;
+    rafId = requestAnimationFrame(() => {
+      update();
+      rafId = null;
+    });
+  }
+
+  function cardStepPx(): number {
+    if (!state) return 320;
+    const first = state.track.querySelector<HTMLElement>('article');
+    const gap = parseFloat(getComputedStyle(state.track).gap || '24');
+    const cardW = first?.getBoundingClientRect().width ?? 320;
+    return cardW + gap;
+  }
+
+  prev?.addEventListener('click', () => {
+    if (!state) return;
+    if (mq.matches && state.maxX > 0) {
+      const step = (cardStepPx() / state.maxX) * state.total;
+      window.scrollBy({ top: -step, behavior: 'smooth' });
+    } else {
+      state.wrap.scrollBy({ left: -cardStepPx(), behavior: 'smooth' });
+    }
+  });
+
+  next?.addEventListener('click', () => {
+    if (!state) return;
+    if (mq.matches && state.maxX > 0) {
+      const step = (cardStepPx() / state.maxX) * state.total;
+      window.scrollBy({ top: step, behavior: 'smooth' });
+    } else {
+      state.wrap.scrollBy({ left: cardStepPx(), behavior: 'smooth' });
+    }
+  });
+
+  if (state) {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', configure);
+    mq.addEventListener('change', configure);
+    state.track.querySelectorAll('img').forEach((img) => {
+      if (!img.complete) img.addEventListener('load', configure, { once: true });
+    });
+    configure();
+  }
+</script>

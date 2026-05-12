@@ -1,0 +1,77 @@
+---
+/**
+ * Large split section: full-bleed image on one side, copy on the other.
+ * Mirrors Lightship's "Freedom, Reimagined" panel.
+ * Set `flip` to put the image on the right (default left).
+ */
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import Reveal from '../ui/Reveal.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  flip?: boolean;
+  /** "dark" reverses the surface to negro */
+  tone?: 'light' | 'dark';
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  image,
+  imageAlt = '',
+  ctaLabel,
+  ctaHref,
+  flip = false,
+  tone = 'light',
+} = Astro.props;
+
+const isDark = tone === 'dark';
+---
+
+<section
+  class={`section overflow-hidden ${isDark ? 'bg-[var(--color-negro)] text-[var(--color-cultivado)]' : 'bg-[var(--color-cultivado)] text-[var(--color-negro)]'}`}
+>
+  <div class="container-wide">
+    <div class={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center ${flip ? 'lg:[direction:rtl]' : ''}`}>
+      <Reveal class={`relative aspect-[4/5] lg:aspect-[5/6] overflow-hidden img-zoom ${flip ? 'lg:[direction:ltr]' : ''}`}>
+        <img
+          src={image}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+      </Reveal>
+
+      <div class={`max-w-xl ${flip ? 'lg:[direction:ltr]' : ''}`}>
+        <Reveal>
+          <Eyebrow class={isDark ? 'text-[var(--color-niebla)]' : ''}>{eyebrow}</Eyebrow>
+        </Reveal>
+        <Reveal delay={100} as="h2" class="display-xl mt-6 text-balance">
+          {title}
+        </Reveal>
+        <Reveal delay={200} as="p" class={`text-base sm:text-lg leading-relaxed mt-8 ${isDark ? 'text-[var(--color-niebla)]' : 'text-[var(--color-grafito)]'}`}>
+          {description}
+        </Reveal>
+        {ctaLabel && ctaHref && (
+          <Reveal delay={300} class="mt-10">
+            <Button
+              href={ctaHref}
+              variant={isDark ? 'ghost' : 'primary'}
+            >
+              {ctaLabel}
+            </Button>
+          </Reveal>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

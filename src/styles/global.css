@@ -1,1 +1,306 @@
 @import "tailwindcss";
+
+/* ============================================================
+   General Sans — self-hosted variable font
+   ============================================================ */
+
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/GeneralSans-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/fonts/GeneralSans-VariableItalic.woff2') format('woff2');
+  font-weight: 200 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+/* ============================================================
+   GALE — Design Tokens
+   Brand palette is sourced from "Manual de Identidad GALE 2024"
+   Layout & motion patterns inspired by lightshiprv.com
+   ============================================================ */
+
+@theme {
+  /* === Brand colors === */
+  --color-cultivado: #F7F6F4;        /* Soft off-white background */
+  --color-cascara: #F0EBD5;          /* Warm cream */
+  --color-azul: #2952BE;             /* Azul Cerúleo — primary accent */
+  --color-azul-deep: #1E3F94;        /* Azul cerúleo darker variant */
+  --color-azul-soft: #4D74D6;        /* Azul cerúleo lighter variant */
+  --color-negro: #141B23;            /* Negro Espeluznante — text/bg */
+  --color-negro-soft: #2A3340;       /* Negro lifted */
+  --color-grafito: #5C6470;          /* Muted gray */
+  --color-niebla: #B8BDC5;           /* Light gray */
+
+  /* === Typography === */
+  --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-display: 'General Sans', system-ui, -apple-system, sans-serif;
+
+  /* === Fluid type scale === */
+  --text-display-2xl: clamp(2rem, 3.5vw + 0.5rem, 4.25rem);
+  --text-display-xl:  clamp(1.75rem, 2.8vw + 0.4rem, 3.25rem);
+  --text-display-lg:  clamp(1.5rem, 2.2vw + 0.4rem, 2.5rem);
+  --text-display-md:  clamp(1.2rem, 1.6vw + 0.3rem, 1.875rem);
+  --text-display-sm:  clamp(1rem, 1.1vw + 0.25rem, 1.375rem);
+
+  /* === Spacing rhythm === */
+  --section-py: clamp(3rem, 6vw, 6rem);
+  --section-py-sm: clamp(2rem, 4vw, 4rem);
+
+  /* === Easing === */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* === Animations === */
+  --animate-fade-in: fade-in 700ms var(--ease-out-quint) both;
+  --animate-fade-up: fade-up 900ms var(--ease-out-quint) both;
+  --animate-fade-down: fade-down 900ms var(--ease-out-quint) both;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-ken-burns: ken-burns 18s ease-in-out infinite alternate;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 40px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-down {
+  from { opacity: 0; transform: translate3d(0, -20px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes ken-burns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to   { transform: scale(1.08) translate3d(-1%, -1%, 0); }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-cultivado);
+    color: var(--color-negro);
+    font-feature-settings: 'ss01', 'ss02';
+    line-height: 1.6;
+    /* `clip` (not `hidden`) — `hidden` makes <html> the implicit scroll
+       container on mobile, which hijacks horizontal touch-pan on inner
+       scrollers like the Sectors carousel. */
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-azul);
+    color: var(--color-cultivado);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-azul);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================================
+   Components / utilities
+   ============================================================ */
+
+@layer components {
+  .container-wide {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 1480px;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+  .container-narrow {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 1120px;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+  .container-prose {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 760px;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .section {
+    padding-block: var(--section-py);
+  }
+  .section-sm {
+    padding-block: var(--section-py-sm);
+  }
+
+  .display-2xl { font-size: var(--text-display-2xl); line-height: 0.95; letter-spacing: -0.03em;  font-weight: 500; }
+  .display-xl  { font-size: var(--text-display-xl);  line-height: 0.98; letter-spacing: -0.025em; font-weight: 500; }
+  .display-lg  { font-size: var(--text-display-lg);  line-height: 1.02; letter-spacing: -0.02em;  font-weight: 500; }
+  .display-md  { font-size: var(--text-display-md);  line-height: 1.1;  letter-spacing: -0.018em; font-weight: 500; }
+  .display-sm  { font-size: var(--text-display-sm);  line-height: 1.15; letter-spacing: -0.015em; font-weight: 500; }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-grafito);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.95rem 1.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 200ms var(--ease-out-expo),
+                background-color 200ms ease,
+                color 200ms ease,
+                border-color 200ms ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background-color: var(--color-negro);
+    color: var(--color-cultivado);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-azul);
+  }
+  .btn-secondary {
+    background-color: var(--color-cultivado);
+    color: var(--color-negro);
+    border: 1px solid color-mix(in oklab, var(--color-negro) 15%, transparent);
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-negro);
+    color: var(--color-cultivado);
+    border-color: var(--color-negro);
+  }
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-cultivado);
+    border: 1px solid color-mix(in oklab, var(--color-cultivado) 35%, transparent);
+  }
+  .btn-ghost:hover {
+    background-color: var(--color-cultivado);
+    color: var(--color-negro);
+    border-color: var(--color-cultivado);
+  }
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: currentColor;
+    cursor: pointer;
+    transition: gap 200ms var(--ease-out-expo);
+  }
+  .btn-link:hover {
+    gap: 0.85rem;
+  }
+
+  .img-zoom {
+    overflow: hidden;
+  }
+  .img-zoom > img,
+  .img-zoom > picture > img {
+    transition: transform 900ms var(--ease-out-quint);
+  }
+  .img-zoom:hover > img,
+  .img-zoom:hover > picture > img {
+    transform: scale(1.05);
+  }
+
+  .ken-burns > img,
+  .ken-burns > picture > img {
+    animation: ken-burns 18s ease-in-out infinite alternate;
+  }
+
+  .hr-hair {
+    height: 1px;
+    background-color: color-mix(in oklab, currentColor 18%, transparent);
+    border: 0;
+  }
+
+  .card-soft {
+    background: var(--color-cultivado);
+    border: 1px solid color-mix(in oklab, var(--color-negro) 8%, transparent);
+    transition: transform 350ms var(--ease-out-quint), border-color 350ms ease;
+  }
+  .card-soft:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in oklab, var(--color-negro) 18%, transparent);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+    transition: opacity 900ms var(--ease-out-quint),
+                transform 900ms var(--ease-out-quint);
+    will-change: opacity, transform;
+  }
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  .reveal[data-delay="100"] { transition-delay: 100ms; }
+  .reveal[data-delay="200"] { transition-delay: 200ms; }
+  .reveal[data-delay="300"] { transition-delay: 300ms; }
+  .reveal[data-delay="400"] { transition-delay: 400ms; }
+  .reveal[data-delay="500"] { transition-delay: 500ms; }
+
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    gap: 3rem;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    flex-shrink: 0;
+    animation: marquee 38s linear infinite;
+  }
+}

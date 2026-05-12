@@ -1,0 +1,154 @@
+---
+import Logo from './ui/Logo.astro';
+import Button from './ui/Button.astro';
+import { nav } from '../data/site';
+
+interface Props {
+  theme?: 'light' | 'dark';
+}
+
+const { theme = 'dark' } = Astro.props;
+---
+
+<header
+  data-navbar
+  data-theme={theme}
+  class="fixed top-0 inset-x-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 group/nav
+         data-[scrolled=false]:data-[theme=dark]:bg-gradient-to-b
+         data-[scrolled=false]:data-[theme=dark]:from-black/60
+         data-[scrolled=false]:data-[theme=dark]:via-black/30
+         data-[scrolled=false]:data-[theme=dark]:to-transparent
+         data-[scrolled=false]:data-[theme=dark]:pb-6
+         data-[scrolled=true]:bg-[var(--color-cultivado)]/90 data-[scrolled=true]:backdrop-blur-md
+         data-[scrolled=true]:border-b data-[scrolled=true]:border-[color-mix(in_oklab,var(--color-negro)_10%,transparent)]
+         data-[theme=dark]:data-[scrolled=false]:text-[var(--color-cultivado)]
+         data-[theme=light]:data-[scrolled=false]:text-[var(--color-negro)]
+         data-[scrolled=true]:text-[var(--color-negro)]
+         data-[theme=dark]:data-[scrolled=false]:[text-shadow:0_1px_12px_rgb(0_0_0/0.45)]"
+>
+  <nav class="container-wide flex items-center justify-between h-16 md:h-20" aria-label="Principal">
+
+    {/*
+      Two logos stacked: cream-filtered for dark hero state,
+      blue-natural for scrolled-on-cream state.
+      JS toggles visibility on scroll (see <script> below).
+    */}
+    <div class="relative leading-none" data-logo-wrap>
+      <span data-logo-dark class={theme === 'light' ? 'hidden' : 'block'}>
+        <Logo tone="dark" height={32} />
+      </span>
+      <span data-logo-light class={theme === 'dark' ? 'hidden' : 'block'}>
+        <Logo tone="light" height={32} />
+      </span>
+    </div>
+
+    {/* Desktop links */}
+    <ul class="hidden lg:flex items-center gap-9">
+      {nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="text-sm font-medium tracking-wide opacity-90 hover:opacity-60 transition-opacity duration-200"
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {/* Desktop CTA */}
+    <div class="hidden lg:flex items-center">
+      <a
+        href="#contacto"
+        class="btn btn-secondary
+               group-data-[scrolled=false]/nav:group-data-[theme=dark]/nav:bg-transparent
+               group-data-[scrolled=false]/nav:group-data-[theme=dark]/nav:text-[var(--color-cultivado)]
+               group-data-[scrolled=false]/nav:group-data-[theme=dark]/nav:border-[color-mix(in_oklab,var(--color-cultivado)_40%,transparent)]
+               group-data-[scrolled=false]/nav:group-data-[theme=dark]/nav:hover:bg-[var(--color-cultivado)]
+               group-data-[scrolled=false]/nav:group-data-[theme=dark]/nav:hover:text-[var(--color-negro)]"
+      >
+        <span>Inicia tu proyecto</span>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      </a>
+    </div>
+
+    {/* Mobile hamburger */}
+    <button
+      type="button"
+      class="lg:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 rounded-full cursor-pointer"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+      aria-label="Abrir menú"
+      data-mobile-toggle
+    >
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path data-line-1 d="M4 7h16" />
+        <path data-line-2 d="M4 12h16" />
+        <path data-line-3 d="M4 17h16" />
+      </svg>
+    </button>
+  </nav>
+
+  {/* Mobile drawer */}
+  <div
+    id="mobile-menu"
+    class="lg:hidden overflow-hidden max-h-0 transition-[max-height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+           bg-[var(--color-cultivado)] text-[var(--color-negro)]"
+    data-mobile-menu
+  >
+    <div class="container-wide py-8 flex flex-col gap-1">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class="py-3.5 text-2xl font-semibold tracking-tight border-b border-[color-mix(in_oklab,var(--color-negro)_8%,transparent)] last:border-0"
+          data-mobile-close
+        >
+          {item.label}
+        </a>
+      ))}
+      <div class="pt-6">
+        <a href="#contacto" class="btn btn-primary w-full justify-center" data-mobile-close>
+          <span>Inicia tu proyecto</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const navbar = document.querySelector<HTMLElement>('[data-navbar]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-toggle]');
+  const menu   = document.querySelector<HTMLElement>('[data-mobile-menu]');
+  const closers = document.querySelectorAll<HTMLElement>('[data-mobile-close]');
+
+  const logoDark  = document.querySelector<HTMLElement>('[data-logo-dark]');
+  const logoLight = document.querySelector<HTMLElement>('[data-logo-light]');
+  const theme = navbar?.dataset.theme ?? 'dark';
+
+  // Scroll: toggle bg + scrolled state + logo variant
+  function updateScroll() {
+    const scrolled = window.scrollY > 24;
+    if (navbar) navbar.dataset.scrolled = String(scrolled);
+    // Only swap logos when starting page was dark-themed
+    if (theme === 'dark' && logoDark && logoLight) {
+      logoDark.classList.toggle('hidden', scrolled);
+      logoLight.classList.toggle('hidden', !scrolled);
+    }
+  }
+  updateScroll();
+  window.addEventListener('scroll', updateScroll, { passive: true });
+
+  // Mobile open / close
+  function setOpen(open: boolean) {
+    if (!navbar || !toggle || !menu) return;
+    navbar.dataset.mobileOpen = String(open);
+    menu.style.maxHeight = open ? menu.scrollHeight + 'px' : '0';
+    menu.classList.toggle('border-b', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle?.addEventListener('click', () => setOpen(navbar?.dataset.mobileOpen !== 'true'));
+  closers.forEach(el => el.addEventListener('click', () => setOpen(false)));
+</script>

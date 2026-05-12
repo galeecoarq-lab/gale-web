@@ -1,0 +1,24 @@
+---
+/**
+ * Clients opinions — editorial testimonial slider.
+ * Replaces the former "El estudio" intro. Keeps id="estudio"
+ * so the nav anchor (#estudio) still resolves.
+ */
+import { testimonials } from '../../data/site';
+import Reveal from '../ui/Reveal.astro';
+import EditorialTestimonial from '../ui/editorial-testimonial.tsx';
+---
+
+<section id="estudio" class="section bg-[var(--color-cultivado)] relative">
+  <div class="container-narrow">
+    <Reveal class="mx-auto max-w-2xl text-center">
+      <h2 class="display-md text-balance">
+        Confianza construida proyecto a proyecto.
+      </h2>
+    </Reveal>
+
+    <Reveal delay={100} class="mt-14">
+      <EditorialTestimonial client:load testimonials={testimonials} autoplayMs={15000} />
+    </Reveal>
+  </div>
+</section>

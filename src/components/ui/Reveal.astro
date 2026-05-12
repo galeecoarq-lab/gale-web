@@ -1,0 +1,20 @@
+---
+/**
+ * Wraps content with the `.reveal` class so the global IntersectionObserver
+ * (in BaseLayout) can animate it on scroll.
+ *
+ *   <Reveal delay={200}><h2>…</h2></Reveal>
+ */
+interface Props {
+  /** Stagger delay in ms. Supported: 0, 100, 200, 300, 400, 500. */
+  delay?: 0 | 100 | 200 | 300 | 400 | 500;
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+}
+
+const { delay = 0, as: Tag = 'div', class: className = '' } = Astro.props;
+---
+
+<Tag class={`reveal ${className}`} data-delay={delay > 0 ? delay : undefined}>
+  <slot />
+</Tag>

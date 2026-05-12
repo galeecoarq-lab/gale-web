@@ -1,0 +1,31 @@
+---
+/**
+ * Infinite marquee of brand values — calm "ticker" rhythm,
+ * doubles as a visual break between dark sections.
+ */
+import { values } from '../../data/site';
+
+interface Props {
+  items?: readonly string[];
+}
+
+const { items = values } = Astro.props;
+---
+
+<section id="valores" class="py-12 lg:py-16 bg-[var(--color-negro)] text-[var(--color-cultivado)] overflow-hidden">
+  <div class="marquee" aria-hidden="true">
+    {[0, 1].map(() => (
+      <div class="marquee-track">
+        {items.map((v) => (
+          <span class="inline-flex items-center gap-6 display-md text-[var(--color-niebla)]/80 whitespace-nowrap">
+            <span>{v}</span>
+            <svg class="w-7 h-7 text-[var(--color-azul-soft)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M12 2v20M2 12h20" stroke-linecap="round"/>
+            </svg>
+          </span>
+        ))}
+      </div>
+    ))}
+  </div>
+  <p class="sr-only">Valores: {items.join(', ')}.</p>
+</section>

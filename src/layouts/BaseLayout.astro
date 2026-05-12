@@ -1,0 +1,105 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set to "dark" when the page opens on a dark hero so navbar reads correctly. */
+  navTheme?: 'light' | 'dark';
+}
+
+const {
+  title = `${site.name} — ${site.tagline}`,
+  description = site.description,
+  navTheme = 'dark',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#141B23" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+
+    {/* Fonts: Montserrat (per brand manual) */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+    />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    {/* Open Graph */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/images/hero/hero-fachada.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+
+  <body class="bg-[var(--color-cultivado)] text-[var(--color-negro)] antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[999] focus:bg-[var(--color-negro)] focus:text-[var(--color-cultivado)] focus:px-4 focus:py-2 focus:rounded-full focus:text-sm"
+    >
+      Saltar al contenido
+    </a>
+
+    <Navbar theme={navTheme} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    {/* Global behaviours: reveal-on-scroll + sticky-nav background toggle */}
+    <script>
+      // === Intersection Observer for .reveal elements ===
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+      if (reveals.length > 0 && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.setAttribute('data-visible', 'true');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+        reveals.forEach((el) => io.observe(el));
+      } else {
+        // Reduced motion / no IO: show immediately
+        reveals.forEach((el) => el.setAttribute('data-visible', 'true'));
+      }
+
+      // === Navbar background on scroll ===
+      const navbar = document.querySelector<HTMLElement>('[data-navbar]');
+      if (navbar) {
+        const update = () => {
+          const scrolled = window.scrollY > 24;
+          navbar.dataset.scrolled = String(scrolled);
+        };
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+      }
+    </script>
+  </body>
+</html>

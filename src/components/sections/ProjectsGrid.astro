@@ -1,0 +1,83 @@
+---
+/**
+ * Editorial project grid — Lightship-style.
+ * Each card is a large image with project metadata and slight
+ * hover reveal of the description.
+ */
+import { projects } from '../../data/site';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import ArrowIcon from '../ui/ArrowIcon.astro';
+
+interface Project {
+  slug: string;
+  title: string;
+  sector: string;
+  year: string;
+  location: string;
+  image: string;
+  description: string;
+}
+
+interface Props {
+  items?: Project[];
+}
+
+const { items = projects } = Astro.props;
+---
+
+<section class="section bg-[var(--color-cultivado)]">
+  <div class="container-wide">
+
+    <div class="grid lg:grid-cols-[1fr_1.6fr] gap-10 lg:gap-20 mb-16 lg:mb-24">
+      <Reveal>
+        <Eyebrow>Proyectos seleccionados</Eyebrow>
+      </Reveal>
+      <Reveal delay={100} as="h2" class="display-xl text-balance">
+        Cada espacio cuenta<br />una historia precisa.
+      </Reveal>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 lg:gap-10">
+      {items.map((project, idx) => (
+        <Reveal
+          delay={(idx % 2 === 0 ? 0 : 150) as 0|100|200|300}
+          class={`group/project ${idx % 4 === 1 || idx % 4 === 2 ? 'md:translate-y-16 lg:translate-y-24' : ''}`}
+        >
+          <a href={`#proyecto-${project.slug}`} class="block cursor-pointer">
+            <div class="img-zoom relative aspect-[4/5] overflow-hidden rounded-sm bg-[color-mix(in_oklab,var(--color-negro)_5%,transparent)]">
+              <img
+                src={project.image}
+                alt={`${project.title} — ${project.sector}`}
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+              <div class="absolute top-4 left-4 text-xs uppercase tracking-[0.18em] font-medium bg-[var(--color-cultivado)]/85 backdrop-blur-sm text-[var(--color-negro)] py-1.5 px-3 rounded-full">
+                {project.sector}
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-start justify-between gap-6">
+              <div>
+                <h3 class="display-md text-balance group-hover/project:text-[var(--color-azul)] transition-colors duration-300">
+                  {project.title}
+                </h3>
+                <p class="mt-3 text-sm text-[var(--color-grafito)]">
+                  {project.location} · {project.year}
+                </p>
+                <p class="mt-4 max-w-md text-sm leading-relaxed text-[var(--color-grafito)]/90">
+                  {project.description}
+                </p>
+              </div>
+
+              <span class="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-full border border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] group-hover/project:bg-[var(--color-negro)] group-hover/project:text-[var(--color-cultivado)] group-hover/project:border-[var(--color-negro)] transition-all duration-300">
+                <ArrowIcon variant="down-right" />
+              </span>
+            </div>
+          </a>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>

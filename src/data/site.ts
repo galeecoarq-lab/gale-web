@@ -12,7 +12,7 @@ export const site = {
     'Estudio de arquitectura sustentable. Diseñamos, consultamos y ejecutamos proyectos integrales en el ámbito residencial, comercial, turístico y corporativo.',
   url: 'https://gale.pe',
   email: 'contacto@gale.pe',
-  phone: '+51 999 999 999',
+  phone: '+51 942 802 551',
   address: 'Lima · Perú',
   social: {
     instagram: 'https://www.instagram.com/gale_ecoarq/',

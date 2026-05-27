@@ -10,6 +10,8 @@ import {
 } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 
+import { BlurFade } from "./blur-fade";
+
 interface iISmoothScrollHeroProps {
     /**
      * Height of the scroll section in pixels
@@ -76,6 +78,14 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
     );
 
     const hasStatement = Boolean(statementLine1 || statementLine2);
+
+    // Right-center tagline fades out as the user starts scrolling so it
+    // doesn't compete with the bottom statement reveal.
+    const taglineOpacity = useTransform(
+        scrollY,
+        [0, scrollHeight * 0.25, scrollHeight * 0.45],
+        [1, 1, 0],
+    );
 
     // Word-by-word reveal driven by the same scroll range that animates the
     // clip-path. The reveal starts at ~55% of the scroll — that's when the
@@ -167,6 +177,30 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
                         scale,
                     }}
                 />
+            </motion.div>
+
+            {/* Right-center tagline — sits on top of the image with the brand
+                cream color. Hidden on small screens where the image already
+                fills the viewport edge-to-edge. */}
+            <motion.div
+                className="pointer-events-none absolute right-[clamp(3rem,12vw,10rem)] top-1/2 z-20 hidden -translate-y-1/2 md:block max-w-md lg:max-w-lg xl:max-w-2xl text-right"
+                style={{ opacity: taglineOpacity }}
+            >
+                <BlurFade delay={0.4} yOffset={12}>
+                    <p
+                        className="font-semibold leading-[1.02] tracking-tight text-[var(--color-cultivado)] [text-shadow:0_2px_26px_rgba(0,0,0,0.55)]"
+                        style={{
+                            fontFamily: "var(--font-display)",
+                            fontSize: "clamp(2.5rem, 4vw + 1rem, 5.5rem)",
+                        }}
+                    >
+                        Transformamos tus ideas en espacios
+                    </p>
+                    <span
+                        aria-hidden="true"
+                        className="mt-6 ml-auto block h-px w-24 bg-[var(--color-cultivado)]/60"
+                    />
+                </BlurFade>
             </motion.div>
         </div>
     );

@@ -233,12 +233,10 @@ export const process = [
 
 export const values = [
   'Innovación',
-  'Responsabilidad',
+  'Funcionalidad',
   'Creatividad',
-  'Vocación de servicio',
-  'Trabajo en equipo',
-  'Mejora continua',
-  'Responsabilidad social',
+  'Estética',
+  'Cercano'
 ];
 
 export const footerColumns = [

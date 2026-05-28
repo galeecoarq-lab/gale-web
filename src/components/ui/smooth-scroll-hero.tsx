@@ -15,7 +15,7 @@ import { BlurFade } from "./blur-fade";
 interface iISmoothScrollHeroProps {
     /**
      * Height of the scroll section in pixels
-     * @default 1500
+     * @default 800
      */
     scrollHeight: number;
     /**
@@ -211,7 +211,7 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
  * Reversed direction: image starts wide and contracts into a window on scroll.
  */
  const SmoothScrollHero: React.FC<iISmoothScrollHeroProps> = ({
-    scrollHeight = 1500,
+    scrollHeight = 800,
     desktopImage,
     mobileImage,
     initialClipPercentage = 25,

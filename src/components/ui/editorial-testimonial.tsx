@@ -66,7 +66,7 @@ export default function EditorialTestimonial({ testimonials, autoplayMs }: Props
   const current = testimonials[active];
 
   return (
-    <div ref={rootRef} className="w-full max-w-2xl mx-auto">
+    <div ref={rootRef} className="w-full max-w-4xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-start md:gap-8">
         <span
           className="hidden md:inline-block text-[120px] font-light leading-none select-none transition-all duration-500 text-[var(--color-azul)]"

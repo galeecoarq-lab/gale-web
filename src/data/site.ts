@@ -79,39 +79,45 @@ export const stats = [
   { value: '+12',  label: 'Años diseñando' },
   { value: '+80',  label: 'Proyectos entregados' },
   { value: '100%', label: 'Enfoque sustentable' },
-  { value: '4',    label: 'Sectores de trabajo' },
+  { value: '6',    label: 'Sectores de trabajo' },
 ];
 
 export const testimonials = [
   {
     id: 1,
     quote:
-      'El equipo de GALE entendió desde la primera conversación cómo queríamos habitar la casa. Cada detalle, desde la luz hasta la materialidad, se pensó para nosotros.',
-    author: 'Lucía Mendoza',
-    role: 'Cliente residencial',
-    company: 'Casa La Molina',
-    image:
-      'https://plus.unsplash.com/premium_photo-1689551671548-79ff30459d2a?w=900&auto=format&fit=crop&q=60',
+      'Porque con GALE la arquitectura no es solo cuestión de lujo, sino también paciencia, inteligencia y pasión por los detalles. Como empresa queremos espacios donde transmitimos nuestra visión a futuro hacia nuestros clientes y pacientes.',
+    author: 'Mónica Arroyo',
+    role: 'CEO',
+    company: 'Finamedic — Finared Locales',
+    image: '/images/testimonials/finamedic-monica.jpeg',
   },
   {
     id: 2,
     quote:
-      'Trabajar con GALE fue una verdadera sociedad creativa. Convirtieron un local difícil en un espacio que nuestros clientes recuerdan.',
-    author: 'Marcos Villarán',
-    role: 'Gerente general',
-    company: 'Casita del Pan',
-    image:
-      'https://images.unsplash.com/photo-1649123245135-4db6ead931b5?w=900&auto=format&fit=crop&q=60',
+      'GALE, un equipo que desde el inicio de un proyecto te escucha, valora tu opinión e integra todo en una propuesta que da satisfacción a la hora de concretar el proyecto. ¡Excelente equipo!',
+    author: 'Hans Cubas',
+    role: 'CEO',
+    company: 'LCS',
+    image: '/images/testimonials/lcs-hans.jpeg',
   },
   {
     id: 3,
     quote:
-      'Honestidad material, rigor técnico y una sensibilidad enorme por el lugar. El resultado supera lo que imaginamos para nuestras oficinas.',
-    author: 'Elena Vargas',
-    role: 'Directora corporativa',
-    company: 'Grupo Andino',
-    image:
-      'https://images.unsplash.com/photo-1701615004837-40d8573b6652?w=900&auto=format&fit=crop&q=60',
+      'El equipo de GALE, unos profesionales en todo el sentido de la palabra: desde el conocimiento técnico al detalle, hasta la inteligencia emocional para resolver los obstáculos que en todo proyecto se presentan, sin perder la consonancia con los sueños que tenemos como clientes. Muy agradecidos y orgullosos de que formen parte de nuestra historia.',
+    author: 'Luis Jiménez',
+    role: 'CEO',
+    company: 'Casita del Pan',
+    image: '/images/testimonials/casita-pan-luis.jpeg',
+  },
+  {
+    id: 4,
+    quote:
+      'Amé trabajar con GALE. Desde el inicio entendieron mi estilo y todo el proceso fue súper ordenado, creativo y personalizado. Lograron crear un espacio sobrio, elegante y acogedor, con detalles que generan ese efecto wow sin perder la armonía. ¡Gracias a todo el equipo!',
+    author: 'Teresa Contreras',
+    role: 'Clienta residencial',
+    company: 'Proyecto residencial',
+    image: '/images/testimonials/clinica-teresa.jpeg',
   },
 ] as const;
 
@@ -147,12 +153,12 @@ export const services = [
 ];
 
 export const sectors = [
-  { title: 'Residencial',  image: '/images/hero/hero-interior-02.webp',  count: '32 proyectos' },
-  { title: 'Comercial',    image: '/images/projects/casita-del-pan.webp', count: '18 proyectos' },
-  { title: 'Turístico',    image: '/images/projects/foto-06.webp',        count: '14 proyectos' },
-  { title: 'Corporativo',  image: '/images/projects/foto-03.webp',        count: '21 proyectos' },
-  { title: 'Educativo',    image: '/images/projects/foto-02.webp',        count: '9 proyectos' },
-  { title: 'Interiorismo', image: '/images/hero/hero-interior-05.webp',   count: '27 proyectos' },
+  { title: 'Comercial',   image: '/images/projects/casita-del-pan.webp', count: '18 proyectos' },
+  { title: 'Residencial', image: '/images/hero/hero-interior-02.webp',   count: '32 proyectos' },
+  { title: 'Salud',       image: '/images/projects/foto-02.webp',        count: '9 proyectos' },
+  { title: 'Corporativo', image: '/images/projects/foto-03.webp',        count: '21 proyectos' },
+  { title: 'Turístico',   image: '/images/projects/foto-06.webp',        count: '14 proyectos' },
+  { title: 'Obras',       image: '/images/hero/hero-interior-05.webp',   count: '27 proyectos' },
 ];
 
 export const projects = [

@@ -75,7 +75,7 @@ const { slides = heroSlides, interval = 6500 } = Astro.props;
             data-active={idx === 0 ? 'true' : 'false'}
           >
             <Eyebrow class="text-[var(--color-niebla)] reveal" data-visible="true">{slide.eyebrow}</Eyebrow>
-            <h1 class="display-2xl mt-5 max-w-[16ch] text-balance">
+            <h1 class="hero-mega mt-5 max-w-[14ch] text-balance">
               {slide.title}<br /><span class="text-[var(--color-niebla)]">{slide.subtitle}</span>
             </h1>
 
@@ -185,3 +185,14 @@ const { slides = heroSlides, interval = 6500 } = Astro.props;
     start();
   }
 </script>
+
+<style>
+  .hero-mega {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: clamp(2.75rem, 7vw + 0.5rem, 7.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    text-transform: none;
+  }
+</style>

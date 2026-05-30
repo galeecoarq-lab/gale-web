@@ -30,29 +30,21 @@ const { items = sectors } = Astro.props;
   <div class="sectors-sticky">
     <div class="sectors-inner">
       <div class="container-wide">
-        <div class="flex items-end justify-between gap-6 mb-8 lg:mb-10">
+        <div class="flex items-end gap-6 lg:gap-10 mb-8 lg:mb-10">
           <div class="max-w-2xl">
             <Reveal><Eyebrow>Rubros</Eyebrow></Reveal>
             <Reveal delay={100} as="h2" class="display-xl mt-6 text-balance">
               Diseñamos para cada<br />tipo de proyecto.
             </Reveal>
           </div>
-
-          <Reveal delay={200} class="hidden md:flex items-center gap-2">
-            <button
-              type="button"
-              class="w-12 h-12 rounded-full border border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] hover:bg-[var(--color-negro)] hover:text-[var(--color-cultivado)] transition-colors duration-200 cursor-pointer inline-flex items-center justify-center"
-              data-scroll="prev" aria-label="Anterior"
-            >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7"/></svg>
-            </button>
-            <button
-              type="button"
-              class="w-12 h-12 rounded-full border border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] hover:bg-[var(--color-negro)] hover:text-[var(--color-cultivado)] transition-colors duration-200 cursor-pointer inline-flex items-center justify-center"
-              data-scroll="next" aria-label="Siguiente"
-            >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-            </button>
+          <Reveal delay={150} class="hidden md:block shrink-0 ml-auto -mr-[clamp(1.25rem,4vw,3rem)]">
+            <img
+              src="/images/sprites/sprit-03.png"
+              alt=""
+              class="w-40 lg:w-56 xl:w-64 h-auto -scale-x-100"
+              loading="lazy"
+              decoding="async"
+            />
           </Reveal>
         </div>
       </div>
@@ -172,8 +164,6 @@ const { items = sectors } = Astro.props;
   const pin = document.querySelector<HTMLElement>('[data-sectors-pin]');
   const track = document.querySelector<HTMLElement>('[data-sectors-track]');
   const wrap = document.querySelector<HTMLElement>('[data-scroll-container]');
-  const prev = document.querySelector<HTMLButtonElement>('[data-scroll="prev"]');
-  const next = document.querySelector<HTMLButtonElement>('[data-scroll="next"]');
 
   const mq = window.matchMedia('(min-width: 768px)');
   const state: PinState | null = pin && track && wrap ? { pin, track, wrap, maxX: 0, total: 0 } : null;
@@ -210,34 +200,6 @@ const { items = sectors } = Astro.props;
       rafId = null;
     });
   }
-
-  function cardStepPx(): number {
-    if (!state) return 320;
-    const first = state.track.querySelector<HTMLElement>('article');
-    const gap = parseFloat(getComputedStyle(state.track).gap || '24');
-    const cardW = first?.getBoundingClientRect().width ?? 320;
-    return cardW + gap;
-  }
-
-  prev?.addEventListener('click', () => {
-    if (!state) return;
-    if (mq.matches && state.maxX > 0) {
-      const step = (cardStepPx() / state.maxX) * state.total;
-      window.scrollBy({ top: -step, behavior: 'smooth' });
-    } else {
-      state.wrap.scrollBy({ left: -cardStepPx(), behavior: 'smooth' });
-    }
-  });
-
-  next?.addEventListener('click', () => {
-    if (!state) return;
-    if (mq.matches && state.maxX > 0) {
-      const step = (cardStepPx() / state.maxX) * state.total;
-      window.scrollBy({ top: step, behavior: 'smooth' });
-    } else {
-      state.wrap.scrollBy({ left: cardStepPx(), behavior: 'smooth' });
-    }
-  });
 
   if (state) {
     window.addEventListener('scroll', onScroll, { passive: true });

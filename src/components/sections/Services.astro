@@ -5,6 +5,7 @@
  * previous numbered services list.
  */
 import ImageGallery from '../ui/image-gallery.tsx';
+import Reveal from '../ui/Reveal.astro';
 
 const items = [
   { src: '/images/projects/casita-del-pan-jaen/foto-02.webp', alt: 'Casita del Pan — Jaén', caption: 'Casita del Pan, Jaén' },
@@ -16,7 +17,19 @@ const items = [
 ];
 ---
 
-<section id="servicios" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)]">
+<section id="servicios" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)] relative overflow-hidden">
+  <div class="pointer-events-none absolute left-0 top-[var(--section-py)] z-10 hidden md:block" aria-hidden="true">
+    <Reveal delay={150}>
+      <img
+        src="/images/sprites/sprit-01.png"
+        alt=""
+        class="w-40 lg:w-56 xl:w-64 h-auto opacity-90"
+        loading="lazy"
+        decoding="async"
+      />
+    </Reveal>
+  </div>
+
   <ImageGallery
     client:visible
     eyebrow="Lo que hacemos"

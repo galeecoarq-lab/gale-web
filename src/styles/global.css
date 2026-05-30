@@ -285,3 +285,24 @@
     animation: marquee 38s linear infinite;
   }
 }
+
+/* Team wave sprites (Process / "Cómo trabajamos").
+   iPhone Safari (and any iPhone browser — they all use Safari's engine) can't
+   decode WebM/VP9 alpha and shows the clip's opaque base layer as a white box
+   (HEVC .mov didn't render there either). So on iPhone we hide the looping
+   <video> and show a transparent still PNG of the same person.
+
+   This is gated on `.is-iphone`, added to <html> by an inline UA-sniff script
+   in BaseLayout (iPhone UA contains "iPhone"; iPad's never does — so iPad keeps
+   the video, which works fine there). The script runs in <head> before the
+   sprite paints, so there's no white-box flash. Left unlayered so it beats
+   Tailwind's utility layer. */
+.sprite-ios-still {
+  display: none;
+}
+.is-iphone .sprite-clip {
+  display: none;
+}
+.is-iphone .sprite-ios-still {
+  display: block;
+}

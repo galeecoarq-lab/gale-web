@@ -24,6 +24,18 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
+
+    {/* iPhone can't decode WebM/VP9 alpha (shows a white box behind the team
+        wave sprites), so the Process section swaps the <video> for a transparent
+        still PNG on iPhone only. iPad handles the video fine, so we target
+        iPhone specifically: its UA contains "iPhone" (and iPod touch "iPod"),
+        while iPad's never does. Inline + in <head> so the .is-iphone class lands
+        before the sprite paints — no white-box flash. */}
+    <script is:inline>
+      if (/iPhone|iPod/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('is-iphone');
+      }
+    </script>
     <meta name="theme-color" content="#141B23" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />

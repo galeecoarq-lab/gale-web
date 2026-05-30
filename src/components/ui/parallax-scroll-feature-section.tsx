@@ -34,8 +34,14 @@ const ParallaxScrollFeatureSection = ({
     return (
         <section
             id="proceso-parallax"
-            className="relative w-full bg-[#FFFEFE] text-[var(--color-negro)]"
+            className="relative w-full bg-white text-[var(--color-negro)]"
         >
+            {/* Top fade: bleeds the cream from the section above into this
+                white section so the seam disappears. */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-32 md:h-48 z-10 bg-gradient-to-b from-[var(--color-cultivado)] to-transparent"
+            />
             <div className="w-full flex flex-col items-center justify-center px-6 pt-24 pb-12 md:pt-32 md:pb-16">
                 <motion.p
                     initial={{ opacity: 0, y: 16 }}
@@ -78,8 +84,8 @@ const ParallaxScrollFeatureSection = ({
                     />
                 ))}
             </div>
-            {/* Bottom fade that bleeds the #FFFEFE section bg into the next
-                section's cream so the colour seam disappears. */}
+            {/* Bottom fade: white section bg → cream so the next section's
+                cream bg picks up seamlessly. */}
             <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-x-0 bottom-0 h-32 md:h-48 z-10 bg-gradient-to-b from-transparent to-[var(--color-cultivado)]"
@@ -181,27 +187,43 @@ const SpriteMedia = ({ spriteUrl, spriteVideoUrl }: SpriteMediaProps) => {
     // which side the section's main image is on. Gives every row a consistent
     // reading flow: text starts left, sprite waves in from the right.
     const floatClasses = "float-right ml-4 -mr-4 md:-mr-8 shape-outside-[circle()]";
-    // Layered cleanup so the asset's white card melts into the page bg:
-    //   1. `brightness/contrast` push near-white pixels to pure #FFF and
-    //      pull dark strokes a touch darker so they survive the blend.
-    //   2. `mix-blend-darken` then clamps anything ≥ the page bg (#FFFEFE)
-    //      back down to the bg, killing the visible rectangle and the
-    //      anti-aliased edge.
-    const baseClasses = `w-28 md:w-36 h-auto mt-1 mb-2 mix-blend-darken [filter:brightness(1.06)_contrast(1.08)_saturate(1.05)] ${floatClasses}`;
+    // The clips carry a real alpha channel, so they composite straight onto the
+    // page — no blend-mode/filter cleanup needed. (The old mix-blend-darken hack
+    // was a workaround for an opaque white card; it also silently broke on iOS,
+    // where mix-blend-mode on <video> is unreliable.)
+    const baseClasses = `w-28 md:w-36 h-auto mt-1 mb-2 ${floatClasses}`;
 
     if (spriteVideoUrl) {
+        // iOS Safari can't render WebM/VP9 alpha — it drops the alpha and shows
+        // the opaque base layer as a white rectangle. (HEVC-with-alpha .mov
+        // didn't render on iPhone either.) So on iOS we swap the looping video
+        // for a transparent still frame extracted from the same clip.
+        //
+        // The swap is pure CSS (`.sprite-clip` / `.sprite-ios-still` in
+        // global.css, gated on the iOS-only `@supports (-webkit-touch-callout)`
+        // query) so it applies on first paint — no JS, no hydration flash, no
+        // white box ever. Both elements ship; CSS shows exactly one.
+        const stillSrc = spriteVideoUrl.replace(/\.webm$/, ".png");
         return (
-            <video
-                src={spriteVideoUrl}
-                poster={spriteUrl}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                aria-hidden="true"
-                className={baseClasses}
-            />
+            <>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    aria-hidden="true"
+                    className={`${baseClasses} sprite-clip`}
+                >
+                    <source src={spriteVideoUrl} type="video/webm" />
+                </video>
+                <img
+                    src={stillSrc}
+                    loading="lazy"
+                    aria-hidden="true"
+                    className={`${baseClasses} sprite-ios-still`}
+                />
+            </>
         );
     }
 

@@ -1,0 +1,51 @@
+---
+/**
+ * Parallax scroll feature — full-bleed scroll-driven reveal of each
+ * step in the "Cómo trabajamos" process, with alternating layout.
+ * Wraps the React component so the data lives alongside the rest of
+ * the site copy.
+ */
+import { process } from '../../data/site';
+import ParallaxScrollFeatureSection from '../ui/parallax-scroll-feature-section.tsx';
+
+const sampleImages = [
+  '/images/highlights/escuchamos.webp',
+  '/images/highlights/imaginamos.webp',
+  '/images/highlights/diseñamos.webp',
+  '/images/highlights/contruir.webp',
+];
+
+const teamSprites = [
+  '/images/team/person-1.png',
+  '/images/team/person-2.png',
+  '/images/team/person-3.png',
+  '/images/team/person-4.png',
+];
+
+// Each person has a paired wave video; the still PNG is used as the poster
+// so the image shows until the clip buffers.
+const teamSpriteVideos = [
+  '/images/team/person-1-wave.mp4',
+  '/images/team/person-2-wave.mp4',
+  '/images/team/person-3-wave.mp4',
+  '/images/team/person-4-wave.mp4',
+];
+
+const sections = process.map((step, idx) => ({
+  id: step.step,
+  title: step.title,
+  description: step.description,
+  imageUrl: sampleImages[idx % sampleImages.length],
+  spriteUrl: teamSprites[idx % teamSprites.length],
+  spriteVideoUrl: teamSpriteVideos[idx % teamSpriteVideos.length],
+  reverse: idx % 2 === 1,
+}));
+---
+
+<ParallaxScrollFeatureSection
+  client:visible
+  eyebrow="Cómo trabajamos"
+  headline="Un proceso claro y a la medida."
+  intro="Desde la primera conversación hasta la entrega, te acompañamos paso a paso. Diseñamos con rigor y construimos con detalle, asegurando que el resultado cumpla y emocione."
+  sections={sections}
+/>

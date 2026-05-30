@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import type { RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 import {
     motion,
     useMotionTemplate,
     useScroll,
     useTransform,
 } from "framer-motion";
+import type { MotionValue } from "framer-motion";
 
 interface MosaicItem {
     image: string;
@@ -66,9 +67,20 @@ const CenterImage = ({
     statementLine1,
     statementLine2,
 }: CenterImageProps) => {
+    // `scrollYProgress` runs 0 → 1 across the pinned panel — drives the
+    // image clip/scale animations.
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ["start start", "end start"],
+    });
+
+    // `entryProgress` runs 0 → 1 BEFORE the panel pins, while the section
+    // is travelling up from the bottom of the viewport. Used to drive the
+    // heading reveal so the words finish writing before the image starts
+    // expanding.
+    const { scrollYProgress: entryProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start end", "start start"],
     });
 
     const clip1 = useTransform(scrollYProgress, [0, 0.6], [25, 0]);
@@ -78,36 +90,129 @@ const CenterImage = ({
     const scale = useTransform(scrollYProgress, [0, 0.8], [1.7, 1]);
     const opacity = useTransform(scrollYProgress, [0.6, 0.8], [1, 0]);
 
-    const hasStatement = Boolean(statementLine1 || statementLine2);
+    // Reveal happens during the section's entry phase, so the heading is
+    // already fully written by the time the user reaches the pinned panel
+    // and the image starts opening.
+    const revealProgress = useTransform(entryProgress, [0.3, 0.95], [0, 1]);
 
     return (
         <motion.div
             className="sticky top-0 h-screen w-full overflow-hidden"
-            style={{ clipPath, opacity, willChange: "clip-path, opacity" }}
+            style={{ opacity, willChange: "opacity" }}
         >
+            {/* Heading sits BEHIND the clipped image. As the image polygon
+                expands outward from the centre, the image (which paints on
+                top via DOM order) progressively covers this title. */}
+            <StatementHeading
+                line1={statementLine1}
+                line2={statementLine2}
+                progress={revealProgress}
+            />
+
+            {/* Clipped image — `absolute inset-0` so it covers the entire
+                sticky panel. The clipPath polygon limits where it actually
+                renders; everything outside the polygon is transparent, so
+                the heading bleeds through there. */}
             <motion.div
                 className="absolute inset-0"
-                style={{
-                    scale,
-                    backgroundImage: `url(${image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    willChange: "transform",
-                }}
-            />
-            {hasStatement && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-[8vh] flex justify-center px-6">
-                    <h2
-                        className="max-w-4xl text-center font-semibold leading-[1.05] tracking-tight text-[var(--color-cultivado)]"
-                        style={{ fontSize: "clamp(1.5rem, 3vw + 0.5rem, 3rem)" }}
-                    >
-                        {statementLine1 && <span className="block">{statementLine1}</span>}
-                        {statementLine2 && <span className="block">{statementLine2}</span>}
-                    </h2>
-                </div>
-            )}
+                style={{ clipPath, willChange: "clip-path" }}
+            >
+                <motion.div
+                    className="absolute inset-0"
+                    style={{
+                        scale,
+                        backgroundImage: `url(${image})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        willChange: "transform",
+                    }}
+                />
+            </motion.div>
         </motion.div>
+    );
+};
+
+interface StatementHeadingProps {
+    line1?: string;
+    line2?: string;
+    progress: MotionValue<number>;
+}
+
+/**
+ * Black-letter heading at the top of the sticky panel. Uses the same
+ * word-by-word reveal vocabulary as the hero. Sits beneath the clipped
+ * centre image so the image's polygon visually consumes the title as it
+ * expands.
+ */
+const StatementHeading = ({ line1, line2, progress }: StatementHeadingProps) => {
+    const hasStatement = Boolean(line1 || line2);
+    const line1Words = (line1 ?? "").split(" ").filter(Boolean);
+    const line2Words = (line2 ?? "").split(" ").filter(Boolean);
+    const totalWords = line1Words.length + line2Words.length;
+
+    if (!hasStatement) return null;
+
+    return (
+        <div className="pointer-events-none absolute inset-x-0 top-[10vh] md:top-[3vh] flex justify-center px-6 mt-0">
+            <h2
+                className="max-w-4xl text-center font-semibold leading-[1.05] tracking-tight text-[var(--color-negro)] text-balance"
+                style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
+            >
+                {line1 && (
+                    <span className="block">
+                        {line1Words.map((word, i) => (
+                            <RevealWord
+                                key={`l1-${i}`}
+                                progress={progress}
+                                range={[i / totalWords, (i + 1) / totalWords]}
+                            >
+                                {word}
+                            </RevealWord>
+                        ))}
+                    </span>
+                )}
+                {line2 && (
+                    <span className="block">
+                        {line2Words.map((word, i) => {
+                            const idx = line1Words.length + i;
+                            return (
+                                <RevealWord
+                                    key={`l2-${i}`}
+                                    progress={progress}
+                                    range={[idx / totalWords, (idx + 1) / totalWords]}
+                                >
+                                    {word}
+                                </RevealWord>
+                            );
+                        })}
+                    </span>
+                )}
+            </h2>
+        </div>
+    );
+};
+
+interface RevealWordProps {
+    children: ReactNode;
+    progress: MotionValue<number>;
+    range: [number, number];
+}
+
+/**
+ * One word of the statement with a low-opacity "ghost" twin underneath so
+ * the line's silhouette is hinted at before its words are scrolled into
+ * visibility. Matches the smooth-scroll-hero reveal vocabulary.
+ */
+const RevealWord = ({ children, progress, range }: RevealWordProps) => {
+    const opacity = useTransform(progress, range, [0, 1]);
+    return (
+        <span className="relative mx-1 inline-block lg:mx-2">
+            <span className="absolute inset-0 opacity-[0.04]">{children}</span>
+            <motion.span style={{ opacity }} className="relative">
+                {children}
+            </motion.span>
+        </span>
     );
 };
 

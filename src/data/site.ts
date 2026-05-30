@@ -9,13 +9,13 @@ export const site = {
   longName: 'Gale Eco Arquitectura',
   tagline: 'Diseñamos espacios y mejores experiencias.',
   description:
-    'Estudio de arquitectura sustentable. Diseñamos, consultamos y ejecutamos proyectos integrales en el ámbito residencial, comercial, turístico y corporativo.',
+    'Somos un estudio de arquitectura de interiores y ejecución de proyectos, enfocado en desarrollar espacios comerciales y residenciales que respondan a las necesidades reales de las personas, combinando funcionalidad, estética y sensibilidad en cada proyecto.',
   url: 'https://gale.pe',
   email: 'contacto@gale.pe',
   phone: '+51 942 802 551',
-  address: 'Lima · Perú',
+  address: 'Perú',
   social: {
-    instagram: 'https://www.instagram.com/gale_ecoarq/',
+    instagram: 'https://www.instagram.com/gale.arqui/',
     tiktok: 'https://www.tiktok.com/@gale.ecoarq',
     linkedin: 'https://www.linkedin.com/in/gale-eco-arquitectura-96266425b/',
   },
@@ -67,12 +67,11 @@ export const heroSlides = [
 ];
 
 export const showcaseGrid = [
-  { image: '/images/events/event-01.webp', label: 'Evento' },
-  { image: '/images/events/event-02.webp', label: 'Evento' },
-  { image: '/images/events/event-03.webp', label: 'Evento' },
-  { image: '/images/events/event-04.webp', label: 'Evento' },
-  { image: '/images/events/event-05.webp', label: 'Evento' },
-  { image: '/images/events/event-06.webp', label: 'Evento' },
+  { image: '/images/studio/studio-01.webp', label: 'Estudio' },
+  { image: '/images/studio/studio-02.webp', label: 'Estudio' },
+  { image: '/images/studio/studio-03.webp', label: 'Estudio' },
+  { image: '/images/studio/studio-04.webp', label: 'Estudio' },
+  { image: '/images/studio/studio-05.webp', label: 'Estudio' },
 ];
 
 export const stats = [
@@ -153,12 +152,12 @@ export const services = [
 ];
 
 export const sectors = [
-  { title: 'Comercial',   image: '/images/projects/casita-del-pan.webp', count: '18 proyectos' },
-  { title: 'Residencial', image: '/images/hero/hero-interior-02.webp',   count: '32 proyectos' },
-  { title: 'Salud',       image: '/images/projects/foto-02.webp',        count: '9 proyectos' },
-  { title: 'Corporativo', image: '/images/projects/foto-03.webp',        count: '21 proyectos' },
-  { title: 'Turístico',   image: '/images/projects/foto-06.webp',        count: '14 proyectos' },
-  { title: 'Obras',       image: '/images/hero/hero-interior-05.webp',   count: '27 proyectos' },
+  { title: 'Comercial',   image: '/images/projects/casita-del-pan.webp' },
+  { title: 'Residencial', image: '/images/projects/residencial-lambayeque.webp'   },
+  { title: 'Salud',       image: '/images/projects/salud-coa-jaen.webp'        },
+  { title: 'Corporativo', image: '/images/projects/corporativo-hcm-jaen.webp'        },
+  { title: 'Turístico',   image: '/images/projects/turistico-colpa-sanignacio.webp'        },
+  { title: 'Obras',       image: '/images/projects/obras.webp'   }
 ];
 
 export const projects = [
@@ -236,6 +235,7 @@ export const values = [
   'Funcionalidad',
   'Creatividad',
   'Estética',
+  'Sensibilidad',
   'Cercano'
 ];
 

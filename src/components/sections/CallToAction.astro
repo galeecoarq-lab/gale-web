@@ -32,6 +32,18 @@ const {
     <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-negro)]/95 via-[var(--color-negro)]/80 to-[var(--color-negro)]/40"></div>
   </div>
 
+  <div class="pointer-events-none absolute inset-y-0 right-0 z-10 hidden lg:flex items-end justify-end pr-8 xl:pr-16" aria-hidden="true">
+    <Reveal delay={200}>
+      <img
+        src="/images/sprites/sprit-01.png"
+        alt=""
+        class="w-72 xl:w-[26rem] h-auto opacity-90 -scale-x-100"
+        loading="lazy"
+        decoding="async"
+      />
+    </Reveal>
+  </div>
+
   <div class="container-wide relative">
     <div class="max-w-3xl">
       <Reveal><Eyebrow class="text-[var(--color-niebla)]">{eyebrow}</Eyebrow></Reveal>

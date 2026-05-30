@@ -166,6 +166,15 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
                         scale,
                     }}
                 />
+                {/* Mobile top scrim — darkens the upper portion of the image
+                    so the cream tagline stays readable over busy content. */}
+                <div
+                    className="pointer-events-none absolute inset-x-0 top-0 h-[55vh] md:hidden"
+                    style={{
+                        background:
+                            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)",
+                    }}
+                />
                 {/* Desktop background */}
                 <motion.div
                     className="absolute inset-0 hidden md:block"
@@ -200,6 +209,26 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
                         aria-hidden="true"
                         className="mt-6 ml-auto block h-px w-24 bg-[var(--color-cultivado)]/60"
                     />
+                </BlurFade>
+            </motion.div>
+
+            {/* Mobile tagline — centered horizontally, positioned in the upper
+                portion of the viewport so it sits comfortably above the user's
+                thumb and doesn't compete with the bottom statement reveal. */}
+            <motion.div
+                className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 flex justify-center px-6 md:hidden"
+                style={{ opacity: taglineOpacity }}
+            >
+                <BlurFade delay={0.4} yOffset={12}>
+                    <p
+                        className="text-center font-semibold leading-[1.05] tracking-tight text-[var(--color-cultivado)] [text-shadow:0_1px_2px_rgba(0,0,0,0.9),0_4px_18px_rgba(0,0,0,0.75)]"
+                        style={{
+                            fontFamily: "var(--font-display)",
+                            fontSize: "clamp(2rem, 8vw + 0.5rem, 3rem)",
+                        }}
+                    >
+                        Transformamos tus ideas en espacios
+                    </p>
                 </BlurFade>
             </motion.div>
         </div>

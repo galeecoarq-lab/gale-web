@@ -11,7 +11,6 @@ import Eyebrow from '../ui/Eyebrow.astro';
 interface Sector {
   title: string;
   image: string;
-  count: string;
 }
 
 interface Props {
@@ -22,6 +21,12 @@ const { items = sectors } = Astro.props;
 ---
 
 <section id="proyectos" class="sectors-pin relative bg-[var(--color-cultivado)]" data-sectors-pin>
+  {/* Bottom fade that bleeds the cream section bg into the following section's
+      #FFFEFE so the colour seam between the two panels disappears. */}
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-32 md:h-48 z-10 bg-gradient-to-b from-transparent to-[#FFFEFE]"
+    aria-hidden="true"
+  ></div>
   <div class="sectors-sticky">
     <div class="sectors-inner">
       <div class="container-wide">

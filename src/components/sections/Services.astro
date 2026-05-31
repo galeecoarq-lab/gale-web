@@ -1,40 +1,114 @@
 ---
 /**
- * "Lo que hacemos" — visual gallery of recent work.
- * A six-image strip where each tile expands on hover, replacing the
- * previous numbered services list.
+ * "Servicios" — editorial expandable list. One panel open at a time, smooth
+ * height animation. Numbered rows + hairline chips instead of an icon-card
+ * grid, so it reads premium and stays "pulcra, no muy cargada".
  */
-import ImageGallery from '../ui/image-gallery.tsx';
+import { serviceGroups } from '../../data/site';
 import Reveal from '../ui/Reveal.astro';
-
-const items = [
-  { src: '/images/projects/casita-del-pan-jaen/foto-02.webp', alt: 'Casita del Pan — Jaén', caption: 'Casita del Pan, Jaén' },
-  { src: '/images/projects/corporativo-lcs-jaen/foto-05.webp', alt: 'Corporativo LCS — Jaén', caption: 'LCS, Jaén' },
-  { src: '/images/projects/maguis-chicken-pucallpa/foto-01.webp', alt: 'Maguis Chicken — Pucallpa', caption: 'Maguis Chicken, Pucallpa' },
-  { src: '/images/projects/residencial-casa-jaen/foto-03.webp', alt: 'Residencial Casa — Jaén', caption: 'Casa, Jaén' },
-  { src: '/images/projects/salud-coa-jaen/foto-04.webp', alt: 'Salud COA — Jaén', caption: 'COA, Jaén' },
-  { src: '/images/projects/turistico-lacolpa-sanignacio/foto-06.webp', alt: 'Turístico La Colpa — San Ignacio', caption: 'La Colpa, San Ignacio' },
-];
+import Eyebrow from '../ui/Eyebrow.astro';
 ---
 
-<section id="servicios" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)] relative overflow-hidden">
-  <div class="pointer-events-none absolute left-0 top-[var(--section-py)] z-10 hidden md:block" aria-hidden="true">
-    <Reveal delay={150}>
-      <img
-        src="/images/sprites/sprit-01.png"
-        alt=""
-        class="w-40 lg:w-56 xl:w-64 h-auto opacity-90"
-        loading="lazy"
-        decoding="async"
-      />
-    </Reveal>
-  </div>
+<section id="servicios" class="section bg-[var(--color-cascara)] text-[var(--color-negro)]">
+  <div class="container-wide">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.6fr] lg:gap-24">
+      <div class="lg:sticky lg:top-32 lg:self-start">
+        <Reveal><Eyebrow>Servicios</Eyebrow></Reveal>
+        <Reveal delay={100} as="h2" class="display-xl mt-6 text-balance">
+          Un servicio integral, de principio a fin.
+        </Reveal>
+        <Reveal delay={200} as="p" class="mt-8 max-w-md text-base lg:text-lg leading-relaxed text-[var(--color-negro)]/70">
+          Acompañamos cada proyecto en todas sus etapas. Toca cada servicio para ver lo que incluye.
+        </Reveal>
+      </div>
 
-  <ImageGallery
-    client:visible
-    eyebrow="Lo que hacemos"
-    title="Nuestras creaciones más recientes."
-    description="Una colección visual de nuestros trabajos — cada espacio diseñado con intención, materialidad honesta y sensibilidad por el lugar."
-    items={items}
-  />
+      <div data-accordion>
+        {serviceGroups.map((group, idx) => {
+          const open = idx === 0;
+          return (
+            <Reveal
+              delay={(Math.min(idx, 3) * 100) as 0|100|200|300}
+              class="acc-item border-t border-[color-mix(in_oklab,var(--color-negro)_15%,transparent)] last:border-b"
+              data-acc-item
+              data-open={open ? 'true' : 'false'}
+            >
+              <button
+                type="button"
+                data-acc-trigger
+                aria-expanded={open ? 'true' : 'false'}
+                class="group flex w-full items-center gap-5 py-7 text-left"
+              >
+                <span class="text-sm font-semibold tabular-nums tracking-[0.18em] text-[var(--color-azul)]">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                <span class="display-md flex-1 transition-colors duration-300 group-hover:text-[var(--color-azul)]">
+                  {group.title}
+                </span>
+                <span
+                  data-acc-icon
+                  class={`relative h-6 w-6 shrink-0 text-[var(--color-negro)]/60 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'rotate-45' : ''}`}
+                  aria-hidden="true"
+                >
+                  <span class="absolute left-1/2 top-1/2 h-px w-4 -translate-x-1/2 -translate-y-1/2 bg-current"></span>
+                  <span class="absolute left-1/2 top-1/2 h-4 w-px -translate-x-1/2 -translate-y-1/2 bg-current"></span>
+                </span>
+              </button>
+
+              <div
+                data-acc-panel
+                class={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+              >
+                <div class="overflow-hidden">
+                  <div class="pb-8 pl-[2.6rem] max-w-2xl">
+                    <p class="text-base leading-relaxed text-[var(--color-negro)]/70">
+                      {group.summary}
+                    </p>
+                    <ul class="mt-5 flex flex-wrap gap-2.5">
+                      {group.items.map((item) => (
+                        <li class="rounded-full border border-[color-mix(in_oklab,var(--color-negro)_18%,transparent)] px-4 py-1.5 text-sm text-[var(--color-negro)]/80">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </div>
+  </div>
 </section>
+
+<script>
+  const accordion = document.querySelector('[data-accordion]');
+  if (accordion) {
+    const items = Array.from(accordion.querySelectorAll<HTMLElement>('[data-acc-item]'));
+    items.forEach((item) => {
+      const trigger = item.querySelector<HTMLButtonElement>('[data-acc-trigger]');
+      const panel = item.querySelector<HTMLElement>('[data-acc-panel]');
+      const icon = item.querySelector<HTMLElement>('[data-acc-icon]');
+      if (!trigger || !panel || !icon) return;
+
+      trigger.addEventListener('click', () => {
+        const willOpen = item.dataset.open !== 'true';
+
+        // Close every panel first (single-open accordion).
+        items.forEach((other) => {
+          other.dataset.open = 'false';
+          other.querySelector('[data-acc-panel]')?.classList.replace('grid-rows-[1fr]', 'grid-rows-[0fr]');
+          other.querySelector('[data-acc-trigger]')?.setAttribute('aria-expanded', 'false');
+          other.querySelector('[data-acc-icon]')?.classList.remove('rotate-45');
+        });
+
+        if (willOpen) {
+          item.dataset.open = 'true';
+          panel.classList.replace('grid-rows-[0fr]', 'grid-rows-[1fr]');
+          trigger.setAttribute('aria-expanded', 'true');
+          icon.classList.add('rotate-45');
+        }
+      });
+    });
+  }
+</script>

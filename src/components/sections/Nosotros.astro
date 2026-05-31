@@ -1,0 +1,60 @@
+---
+/**
+ * "Nosotros" — the brand statement (moved out of the hero, now in azul),
+ * the studio intro and the philosophy, paired with the team photo. Editorial
+ * and calm; the azul statement is the focal point and the photo echoes it
+ * (the same phrase is written on the studio whiteboard behind the team).
+ */
+import { brandStatement, about } from '../../data/site';
+import Reveal from '../ui/Reveal.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+---
+
+<section id="nosotros" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)]">
+  <div class="container-wide">
+    <div class="flex items-end justify-between gap-8">
+      <div class="max-w-4xl">
+        <Reveal><Eyebrow class="text-[var(--color-azul-soft)]">Nosotros</Eyebrow></Reveal>
+        <Reveal delay={100} as="h2" class="display-2xl mt-6 text-balance text-[var(--color-cultivado)]">
+          {brandStatement.line1}<br />{brandStatement.line2}
+        </Reveal>
+      </div>
+      <Reveal delay={150} class="hidden md:block shrink-0 w-40 lg:w-52 opacity-90">
+        <img
+          src="/images/sprites/sprit-01.png"
+          alt=""
+          aria-hidden="true"
+          class="w-full h-auto select-none [transform:scaleX(-1)]"
+          loading="lazy"
+          decoding="async"
+        />
+      </Reveal>
+    </div>
+
+    <div class="mt-14 grid items-center gap-10 lg:mt-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+      <Reveal>
+        <figure class="img-zoom overflow-hidden rounded-2xl shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)]">
+          <img
+            src={about.image}
+            alt={about.imageAlt}
+            class="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </Reveal>
+
+      <div>
+        <Reveal delay={100} as="p" class="text-lg leading-relaxed text-[var(--color-cultivado)]/75 text-pretty lg:text-xl">
+          {about.intro}
+        </Reveal>
+        <Reveal delay={200} class="mt-10 border-t border-[color-mix(in_oklab,var(--color-cultivado)_15%,transparent)] pt-8">
+          <h3 class="display-sm text-[var(--color-cultivado)]">{about.philosophyTitle}</h3>
+          <p class="mt-4 max-w-prose text-base leading-relaxed text-[var(--color-cultivado)]/60 text-pretty">
+            {about.philosophy}
+          </p>
+        </Reveal>
+      </div>
+    </div>
+  </div>
+</section>

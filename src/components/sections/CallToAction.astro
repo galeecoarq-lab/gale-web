@@ -1,29 +1,31 @@
 ---
 /**
- * Closing CTA — full-bleed dark panel with large statement and primary CTA.
- * Lightship's equivalent is the "Closer Look" / "Mission Statement" section.
+ * Closing CTA / "Contacto" — full-bleed dark panel with the closing line and
+ * the three contact actions the client asked for: Correo, Instagram, Agendar
+ * reunión.
  */
-import Button from '../ui/Button.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
 import Reveal from '../ui/Reveal.astro';
+import { links } from '../../data/site';
 
 interface Props {
   eyebrow?: string;
   title?: string;
   description?: string;
-  ctaLabel?: string;
-  ctaHref?: string;
   image?: string;
 }
 
 const {
   eyebrow = 'Conversemos',
   title = 'Cada proyecto empieza por una buena conversación.',
-  description = 'Cuéntanos qué tienes en mente. Coordinamos una primera reunión sin compromiso para entender tu visión y proponerte un camino.',
-  ctaLabel = 'Inicia tu proyecto',
-  ctaHref = '#contacto',
+  description = 'Transformemos tu idea en un espacio funcional, rentable y memorable.',
   image = '/images/projects/casita-del-pan.webp',
 } = Astro.props;
+
+const solid =
+  'inline-flex items-center gap-2.5 rounded-full bg-[var(--color-cultivado)] px-6 py-3.5 text-sm font-medium tracking-wide text-[var(--color-negro)] transition-colors duration-300 hover:bg-[var(--color-azul)] hover:text-[var(--color-cultivado)]';
+const outline =
+  'inline-flex items-center gap-2.5 rounded-full border border-[color-mix(in_oklab,var(--color-cultivado)_40%,transparent)] px-6 py-3.5 text-sm font-medium tracking-wide text-[var(--color-cultivado)] transition-colors duration-300 hover:border-[var(--color-cultivado)] hover:bg-[var(--color-cultivado)] hover:text-[var(--color-negro)]';
 ---
 
 <section id="contacto" class="section bg-[var(--color-negro)] text-[var(--color-cultivado)] relative overflow-hidden">
@@ -54,12 +56,28 @@ const {
         {description}
       </Reveal>
       <Reveal delay={300} class="mt-10 flex flex-wrap items-center gap-3">
-        <Button href={ctaHref} variant="primary" class="bg-[var(--color-cultivado)] text-[var(--color-negro)] hover:bg-[var(--color-azul)] hover:text-[var(--color-cultivado)]">
-          {ctaLabel}
-        </Button>
-        <Button href="mailto:contacto@gale.pe" variant="ghost" icon={false}>
-          Escríbenos un correo
-        </Button>
+        <a href={links.correo} class={outline}>
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3.5 6.5 8.5 7 8.5-7" />
+          </svg>
+          Correo
+        </a>
+        <a href={links.instagram} target="_blank" rel="noopener noreferrer" class={outline}>
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+          </svg>
+          Instagram
+        </a>
+        <a href={links.reunion} target="_blank" rel="noopener noreferrer" class={solid}>
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="3" y="4.5" width="18" height="16" rx="2" />
+            <path d="M3 9h18M8 3v3m8-3v3" />
+          </svg>
+          Agendar reunión
+        </a>
       </Reveal>
     </div>
   </div>

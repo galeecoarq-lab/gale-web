@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import type { ReactNode } from "react";
 
 import {
     motion,
@@ -8,39 +7,89 @@ import {
     useScroll,
     useTransform,
 } from "framer-motion";
-import type { MotionValue } from "framer-motion";
+
+/** Spins a numeric string (e.g. "+50") from 0 to its target value on mount. */
+const CountUp: React.FC<{ value: string }> = ({ value }) => {
+    const match = value.match(/^([^0-9]*)(\d+)([^0-9]*)$/);
+    if (!match) return <>{value}</>;
+
+    const prefix = match[1];
+    const target = parseInt(match[2], 10);
+    const suffix = match[3];
+
+    const [count, setCount] = React.useState(0);
+
+    React.useEffect(() => {
+        // Start after BlurFade has revealed the strip (~700 ms delay + buffer)
+        const DELAY = 820;
+        const DURATION = 1600;
+
+        let rafId: number;
+        const timerId = setTimeout(() => {
+            let startTime: number | null = null;
+            const step = (ts: number) => {
+                if (!startTime) startTime = ts;
+                const elapsed = ts - startTime;
+                const progress = Math.min(elapsed / DURATION, 1);
+                // Ease-out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                setCount(Math.round(eased * target));
+                if (progress < 1) rafId = requestAnimationFrame(step);
+            };
+            rafId = requestAnimationFrame(step);
+        }, DELAY);
+
+        return () => {
+            clearTimeout(timerId);
+            cancelAnimationFrame(rafId);
+        };
+    }, [target]);
+
+    // A hidden spacer reserves the full final-value width so the adjacent
+    // label text never shifts as the digit count grows during the animation.
+    return (
+        <span style={{ display: "inline-block", position: "relative" }}>
+            <span aria-hidden="true" style={{ visibility: "hidden" }}>{value}</span>
+            <span style={{ position: "absolute", left: 0, top: 0 }}>{prefix}{count}{suffix}</span>
+        </span>
+    );
+};
 
 import { BlurFade } from "./blur-fade";
 
+interface HeroCta {
+    label: string;
+    href: string;
+    variant: "solid" | "outline" | "link";
+    icon?: boolean;
+}
+
+interface HeroStat {
+    value: string;
+    label: string;
+}
+
 interface iISmoothScrollHeroProps {
-    /**
-     * Height of the scroll section in pixels
-     * @default 800
-     */
+    /** Height of the scroll section in pixels. @default 800 */
     scrollHeight: number;
-    /**
-     * Background image URL for desktop view
-     */
+    /** Background image URL for desktop view */
     desktopImage: string;
-    /**
-     * Background image URL for mobile view
-     */
+    /** Background image URL for mobile view */
     mobileImage: string;
-    /**
-     * Final clip-path inset percentage (the window the image collapses into).
-     * @default 25
-     */
+    /** Clip-path inset percentage the image collapses into. @default 25 */
     initialClipPercentage: number;
-    /**
-     * Final clip-path outset percentage (the window the image collapses into).
-     * @default 75
-     */
+    /** Clip-path outset percentage the image collapses into. @default 75 */
     finalClipPercentage: number;
-    /**
-     * Brand statement rendered below the image as it collapses on scroll.
-     */
-    statementLine1?: string;
-    statementLine2?: string;
+    /** Hero copy + actions. */
+    title: string;
+    subtitle: string;
+    ctas: HeroCta[];
+    stats: HeroStat[];
+    presenceLabel: string;
+    presenceCities: string[];
+    presenceSuffix?: string;
+    /** When true, render the title in azul cerúleo instead of off-white. */
+    titleInAzul?: boolean;
 }
 
 const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
@@ -49,113 +98,52 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
     mobileImage,
     initialClipPercentage,
     finalClipPercentage,
-    statementLine1,
-    statementLine2,
+    title,
+    subtitle,
+    ctas,
+    stats,
+    presenceLabel,
+    presenceCities,
+    presenceSuffix,
+    titleInAzul,
 }) => {
-    const {scrollY} = useScroll();
+    const { scrollY } = useScroll();
 
-    // Reversed: start full-bleed (0% / 100%) and contract toward the
-    // initial/final clip percentages as the user scrolls down.
-    const clipStart = useTransform(
+    // Start full-bleed and contract toward the configured clip percentages as
+    // the user scrolls down. `inset()` (rather than `polygon()`) is used so the
+    // window can carry a `round` radius — top/left inset grows from 0, while the
+    // right/bottom inset grows from 0 to (100 − finalClipPercentage).
+    const insetTopLeft = useTransform(scrollY, [0, scrollHeight], [0, initialClipPercentage]);
+    const insetBottomRight = useTransform(scrollY, [0, scrollHeight], [0, 100 - finalClipPercentage]);
+    // Corners round in as the image contracts — flush at full-bleed (no notched
+    // viewport corners), softened once it pulls into its centered window.
+    const cornerRadius = useTransform(scrollY, [0, scrollHeight], [0, 28]);
+    const clipPath = useMotionTemplate`inset(${insetTopLeft}% ${insetBottomRight}% ${insetBottomRight}% ${insetTopLeft}% round ${cornerRadius}px)`;
+
+    // Slow zoom while scrolling — keeps `background-size: cover` honest on
+    // portrait viewports (a percentage size would leave gutters).
+    const scale = useTransform(scrollY, [0, scrollHeight + 500], [1, 1.7]);
+
+    // Hero content sits on top of the image and lifts away the instant the user
+    // starts scrolling — no hold — so it never collides with the contracting
+    // window. The fade fully resolves well before the clip animation completes.
+    const contentOpacity = useTransform(
         scrollY,
-        [0, scrollHeight],
-        [0, initialClipPercentage],
+        [0, scrollHeight * 0.3],
+        [1, 0],
     );
-    const clipEnd = useTransform(
-        scrollY,
-        [0, scrollHeight],
-        [100, finalClipPercentage],
-    );
+    const contentY = useTransform(scrollY, [0, scrollHeight * 0.3], [0, -40]);
 
-    const clipPath = useMotionTemplate`polygon(${clipStart}% ${clipStart}%, ${clipEnd}% ${clipStart}%, ${clipEnd}% ${clipEnd}%, ${clipStart}% ${clipEnd}%)`;
-
-    // Zoom via transform/scale so we can keep `background-size: cover` —
-    // a percentage size would leave gutters on portrait viewports.
-    const scale = useTransform(
-        scrollY,
-        [0, scrollHeight + 500],
-        [1, 1.7],
-    );
-
-    const hasStatement = Boolean(statementLine1 || statementLine2);
-
-    // Right-center tagline fades out as the user starts scrolling so it
-    // doesn't compete with the bottom statement reveal.
-    const taglineOpacity = useTransform(
-        scrollY,
-        [0, scrollHeight * 0.25, scrollHeight * 0.45],
-        [1, 1, 0],
-    );
-
-    // Word-by-word reveal driven by the same scroll range that animates the
-    // clip-path. The reveal starts at ~55% of the scroll — that's when the
-    // contracting image has uncovered enough room at the bottom for the
-    // statement to be visible. Mapping the reveal to the full scroll would
-    // burn through the first words while they were still hidden, so only the
-    // last word or two would visibly animate.
-    const line1Words = (statementLine1 ?? "").split(" ").filter(Boolean);
-    const line2Words = (statementLine2 ?? "").split(" ").filter(Boolean);
-    const totalWords = line1Words.length + line2Words.length;
-    const revealProgress = useTransform(
-        scrollY,
-        [scrollHeight * 0.4, scrollHeight * 0.95],
-        [0, 1],
-    );
+    const titleColor = titleInAzul ? "var(--color-azul)" : "var(--color-cultivado)";
 
     return (
         <div className="sticky top-0 h-screen w-full overflow-hidden">
-            {/* Behind layer: statement sits underneath the image and is
-                naturally revealed as the clip-path shrinks on scroll. */}
-            {hasStatement && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-[3vh] flex justify-center px-6 md:bottom-[4vh]">
-                    <h2
-                        className="max-w-5xl text-center font-semibold leading-[1.05] tracking-tight"
-                        style={{ fontSize: "clamp(1.25rem, 2.2vw + 0.3rem, 2.5rem)" }}
-                    >
-                        {statementLine1 && (
-                            <span className="block text-[var(--color-negro)]">
-                                {line1Words.map((word, i) => (
-                                    <RevealWord
-                                        key={`l1-${i}`}
-                                        progress={revealProgress}
-                                        range={[i / totalWords, (i + 1) / totalWords]}
-                                    >
-                                        {word}
-                                    </RevealWord>
-                                ))}
-                            </span>
-                        )}
-                        {statementLine2 && (
-                            <span className="block text-[var(--color-negro)]">
-                                {line2Words.map((word, i) => {
-                                    const idx = line1Words.length + i;
-                                    return (
-                                        <RevealWord
-                                            key={`l2-${i}`}
-                                            progress={revealProgress}
-                                            range={[idx / totalWords, (idx + 1) / totalWords]}
-                                        >
-                                            {word}
-                                        </RevealWord>
-                                    );
-                                })}
-                            </span>
-                        )}
-                    </h2>
-                </div>
-            )}
-
-            {/* Front layer: clipped image. As the polygon shrinks the area
-                outside it becomes transparent and the statement underneath
-                shows through. */}
+            {/* Image layer — clips + scales on scroll. Scrims live inside so the
+                gradient tracks the image as it contracts. */}
             <motion.div
-                className="absolute inset-0 bg-black"
-                style={{
-                    clipPath,
-                    willChange: "clip-path, transform",
-                }}
+                className="absolute inset-0 bg-[var(--color-cultivado)]"
+                style={{ clipPath, willChange: "clip-path, transform" }}
             >
-                {/* Mobile background */}
                 <motion.div
                     className="absolute inset-0 md:hidden"
                     style={{
@@ -166,16 +154,6 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
                         scale,
                     }}
                 />
-                {/* Mobile top scrim — darkens the upper portion of the image
-                    so the cream tagline stays readable over busy content. */}
-                <div
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[55vh] md:hidden"
-                    style={{
-                        background:
-                            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)",
-                    }}
-                />
-                {/* Desktop background */}
                 <motion.div
                     className="absolute inset-0 hidden md:block"
                     style={{
@@ -186,49 +164,119 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
                         scale,
                     }}
                 />
+                {/* Two-axis scrim: a left→right ramp builds a readable column
+                    under the copy while the right half of the photo stays
+                    vibrant; a bottom wash anchors the stats strip; a faint top
+                    wash keeps the dark navbar legible. */}
+                <div
+                    className="pointer-events-none absolute inset-0"
+                    aria-hidden="true"
+                    style={{
+                        background:
+                            "linear-gradient(to right, rgba(20,27,35,0.82) 0%, rgba(20,27,35,0.64) 24%, rgba(20,27,35,0.40) 42%, rgba(20,27,35,0.12) 60%, rgba(20,27,35,0) 74%), linear-gradient(to top, rgba(20,27,35,0.74) 0%, rgba(20,27,35,0.34) 22%, rgba(20,27,35,0) 48%, rgba(20,27,35,0) 88%, rgba(20,27,35,0.10) 100%)",
+                    }}
+                />
             </motion.div>
 
-            {/* Right-center tagline — sits on top of the image with the brand
-                cream color. Hidden on small screens where the image already
-                fills the viewport edge-to-edge. */}
+            {/* Content overlay — independent of the clip so it stays crisp. */}
             <motion.div
-                className="pointer-events-none absolute right-[clamp(3rem,12vw,10rem)] top-1/2 z-20 hidden -translate-y-1/2 md:block max-w-md lg:max-w-lg xl:max-w-2xl text-right"
-                style={{ opacity: taglineOpacity }}
+                className="absolute inset-0 z-20 flex flex-col justify-end"
+                style={{ opacity: contentOpacity, y: contentY }}
             >
-                <BlurFade delay={0.4} yOffset={12}>
-                    <p
-                        className="font-semibold leading-[1.02] tracking-tight text-[var(--color-cultivado)] [text-shadow:0_2px_26px_rgba(0,0,0,0.55)]"
-                        style={{
-                            fontFamily: "var(--font-display)",
-                            fontSize: "clamp(2.5rem, 4vw + 1rem, 5.5rem)",
-                        }}
-                    >
-                        Transformamos tus ideas en espacios
-                    </p>
-                    <span
-                        aria-hidden="true"
-                        className="mt-6 ml-auto block h-px w-24 bg-[var(--color-cultivado)]/60"
-                    />
-                </BlurFade>
-            </motion.div>
+                <div className="container-wide w-full pb-6 md:pb-10">
+                    <BlurFade delay={0.25} yOffset={16}>
+                        <h1
+                            className="max-w-[16ch] font-semibold leading-[0.98] tracking-tight"
+                            style={{
+                                fontFamily: "var(--font-display)",
+                                fontSize: "clamp(2.25rem, 5.5vw + 0.6rem, 6rem)",
+                                color: titleColor,
+                                textShadow: "0 2px 20px rgba(20,27,35,0.55)",
+                            }}
+                        >
+                            {title}
+                        </h1>
+                    </BlurFade>
 
-            {/* Mobile tagline — centered horizontally, positioned in the upper
-                portion of the viewport so it sits comfortably above the user's
-                thumb and doesn't compete with the bottom statement reveal. */}
-            <motion.div
-                className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 flex justify-center px-6 md:hidden"
-                style={{ opacity: taglineOpacity }}
-            >
-                <BlurFade delay={0.4} yOffset={12}>
-                    <p
-                        className="text-center font-semibold leading-[1.05] tracking-tight text-[var(--color-cultivado)] [text-shadow:0_1px_2px_rgba(0,0,0,0.9),0_4px_18px_rgba(0,0,0,0.75)]"
-                        style={{
-                            fontFamily: "var(--font-display)",
-                            fontSize: "clamp(2rem, 8vw + 0.5rem, 3rem)",
-                        }}
-                    >
-                        Transformamos tus ideas en espacios
-                    </p>
+                    <BlurFade delay={0.4} yOffset={14}>
+                        <p
+                            className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-[var(--color-cultivado)]/85 sm:mt-6 sm:text-lg"
+                            style={{ textShadow: "0 1px 10px rgba(0,0,0,0.35)" }}
+                        >
+                            {subtitle}
+                        </p>
+                    </BlurFade>
+
+                    <BlurFade delay={0.55} yOffset={12}>
+                        <div className="mt-6 flex flex-col items-start gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
+                            {ctas.map((cta) => (
+                                <a
+                                    key={cta.label}
+                                    href={cta.href}
+                                    className={
+                                        cta.variant === "solid"
+                                            ? "group inline-flex items-center gap-2 rounded-full bg-[var(--color-cultivado)] px-6 py-3.5 text-sm font-medium tracking-wide text-[var(--color-negro)] transition-colors duration-300 hover:bg-[var(--color-azul)] hover:text-[var(--color-cultivado)]"
+                                            : cta.variant === "outline"
+                                            ? "group inline-flex items-center gap-2 rounded-full border border-[color-mix(in_oklab,var(--color-cultivado)_45%,transparent)] px-6 py-3.5 text-sm font-medium tracking-wide text-[var(--color-cultivado)] transition-colors duration-300 hover:border-[var(--color-azul)] hover:text-[var(--color-azul)]"
+                                            : "group inline-flex items-center gap-1.5 pl-6 text-sm font-medium tracking-wide text-[color-mix(in_oklab,var(--color-cultivado)_70%,transparent)] underline underline-offset-4 decoration-[color-mix(in_oklab,var(--color-cultivado)_30%,transparent)] transition-colors duration-300 hover:text-[var(--color-cultivado)] hover:decoration-[var(--color-cultivado)]"
+                                    }
+                                >
+                                    {cta.label}
+                                    {cta.icon !== false && (
+                                        <svg
+                                            className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.6"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="M5 12h14M13 6l6 6-6 6" />
+                                        </svg>
+                                    )}
+                                </a>
+                            ))}
+                        </div>
+                    </BlurFade>
+                </div>
+
+                {/* Indicators strip — an editorial facts bar, not a metric grid. */}
+                <BlurFade delay={0.7} yOffset={0}>
+                    <div className="border-t border-[color-mix(in_oklab,var(--color-cultivado)_18%,transparent)]">
+                        <div className="container-wide flex flex-col gap-2.5 py-4 md:gap-3 md:py-6">
+                            <dl className="grid grid-cols-3 gap-x-4 md:flex md:flex-wrap md:items-baseline md:gap-x-10">
+                                {stats.map((stat) => (
+                                    <div
+                                        key={stat.label}
+                                        className="flex flex-col gap-0.5 md:flex-row md:items-baseline md:gap-2"
+                                    >
+                                        <dt className="sr-only">{stat.label}</dt>
+                                        <dd className="contents">
+                                            <span
+                                                className="font-semibold leading-none text-[var(--color-cultivado)]"
+                                                style={{
+                                                    fontFamily: "var(--font-display)",
+                                                    fontSize: "clamp(1.5rem, 1.4vw + 1rem, 2rem)",
+                                                }}
+                                            >
+                                                <CountUp value={stat.value} />
+                                            </span>
+                                            <span className="text-[0.625rem] uppercase leading-tight tracking-[0.14em] text-[var(--color-cultivado)]/70 sm:text-xs">
+                                                {stat.label}
+                                            </span>
+                                        </dd>
+                                    </div>
+                                ))}
+                            </dl>
+                            <p className="max-w-3xl text-[0.6875rem] leading-relaxed text-[var(--color-cultivado)]/65 sm:text-xs">
+                                <span className="text-[var(--color-cultivado)]/85">{presenceLabel}:</span>{" "}
+                                {presenceCities.join(", ")}
+                                {presenceSuffix ? ` ${presenceSuffix}.` : "."}
+                            </p>
+                        </div>
+                    </div>
                 </BlurFade>
             </motion.div>
         </div>
@@ -236,51 +284,18 @@ const SmoothScrollHeroBackground: React.FC<iISmoothScrollHeroProps> = ({
 };
 
 /**
- * A smooth scroll hero component with parallax background effect.
- * Reversed direction: image starts wide and contracts into a window on scroll.
+ * Smooth-scroll hero. The image starts full-bleed and contracts into a centred
+ * window as the user scrolls; the hero copy sits on top and fades away.
  */
- const SmoothScrollHero: React.FC<iISmoothScrollHeroProps> = ({
-    scrollHeight = 800,
-    desktopImage,
-    mobileImage,
-    initialClipPercentage = 25,
-    finalClipPercentage = 75,
-    statementLine1,
-    statementLine2,
-}) => {
+const SmoothScrollHero: React.FC<iISmoothScrollHeroProps> = (props) => {
     return (
         <div
-            style={{height: `calc(${scrollHeight}px + 100vh)`}}
-            className="relative w-full"
+            style={{ height: `calc(${props.scrollHeight}px + 100vh)` }}
+            className="relative w-full bg-[var(--color-cultivado)]"
         >
-            <SmoothScrollHeroBackground
-                scrollHeight={scrollHeight}
-                desktopImage={desktopImage}
-                mobileImage={mobileImage}
-                initialClipPercentage={initialClipPercentage}
-                finalClipPercentage={finalClipPercentage}
-                statementLine1={statementLine1}
-                statementLine2={statementLine2}
-            />
+            <SmoothScrollHeroBackground {...props} />
         </div>
     );
 };
+
 export default SmoothScrollHero;
-
-interface RevealWordProps {
-    children: ReactNode;
-    progress: MotionValue<number>;
-    range: [number, number];
-}
-
-const RevealWord: React.FC<RevealWordProps> = ({ children, progress, range }) => {
-    const opacity = useTransform(progress, range, [0, 1]);
-    return (
-        <span className="relative mx-1 inline-block lg:mx-2">
-            <span className="absolute inset-0 opacity-[0.04]">{children}</span>
-            <motion.span style={{ opacity }} className="relative">
-                {children}
-            </motion.span>
-        </span>
-    );
-};

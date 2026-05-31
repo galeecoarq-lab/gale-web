@@ -1,39 +1,44 @@
 ---
-import BaseLayout         from '../layouts/BaseLayout.astro';
-import HeroSmoothScroll   from '../components/sections/HeroSmoothScroll.astro';
-import ImageMosaic        from '../components/sections/ImageMosaic.astro';
-import ClientsOpinions    from '../components/sections/ClientsOpinions.astro';
-import Services           from '../components/sections/Services.astro';
-import SectorsCarousel    from '../components/sections/SectorsCarousel.astro';
+import BaseLayout            from '../layouts/BaseLayout.astro';
+import HeroSmoothScroll      from '../components/sections/HeroSmoothScroll.astro';
+import FeaturedProjects      from '../components/sections/FeaturedProjects.astro';
+import Services              from '../components/sections/Services.astro';
+import SectorsCarousel       from '../components/sections/SectorsCarousel.astro';
 import ParallaxScrollFeature from '../components/sections/ParallaxScrollFeature.astro';
-import LogoReveal         from '../components/sections/LogoReveal.astro';
-import Process            from '../components/sections/Process.astro';
-import ValuesMarquee      from '../components/sections/ValuesMarquee.astro';
-import CallToAction       from '../components/sections/CallToAction.astro';
+import Nosotros              from '../components/sections/Nosotros.astro';
+import ClientsOpinions       from '../components/sections/ClientsOpinions.astro';
+import ValuesMarquee         from '../components/sections/ValuesMarquee.astro';
+import CallToAction          from '../components/sections/CallToAction.astro';
 ---
 
 <BaseLayout
-  title="GALE — Arquitectura sustentable | Diseñamos espacios y mejores experiencias"
-  description="Estudio de arquitectura en Lima especializado en diseño residencial, comercial, turístico y corporativo con un enfoque sustentable."
+  title="GALE — Arquitectura, interiorismo y ejecución de proyectos"
+  description="Estudio de arquitectura, interiorismo y ejecución de proyectos comerciales, corporativos y residenciales en todo el norte del Perú."
   navTheme="dark"
 >
+  <!-- 1 · Portada -->
   <HeroSmoothScroll />
 
-  <SectorsCarousel />
+  <!-- 2 · Proyectos destacados -->
+  <FeaturedProjects />
 
-  <ParallaxScrollFeature />
-
-  <!-- <LogoReveal /> -->
-
-  <ImageMosaic />
-
-  <ClientsOpinions />
-
+  <!-- 3 · Servicios -->
   <Services />
 
-  <Process />
+  <!-- 3.2 · Rubros -->
+  <SectorsCarousel />
+
+  <!-- 4 · Proceso -->
+  <ParallaxScrollFeature />
+
+  <!-- 5 · Nosotros -->
+  <Nosotros />
+
+  <!-- 6 · Testimonios -->
+  <ClientsOpinions />
 
   <ValuesMarquee />
 
+  <!-- 7 · Contacto -->
   <CallToAction />
 </BaseLayout>

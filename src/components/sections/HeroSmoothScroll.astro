@@ -1,13 +1,13 @@
 ---
 /**
- * Smooth-scroll hero — reversed direction.
- * Image starts full-bleed and contracts into a centered window as the user scrolls.
+ * Smooth-scroll hero — the image starts full-bleed and contracts into a
+ * centered window as the user scrolls. Copy (title, subtitle, CTAs and the
+ * quick-indicators strip) sits on top and fades away on scroll.
  *
- * The framer-motion component is mounted as a React island; `useScroll` needs
- * the browser, so we pass `client:load` to hydrate immediately.
+ * `useScroll` needs the browser, so the React island hydrates with client:load.
  */
 import SmoothScrollHero from '../ui/smooth-scroll-hero.tsx';
-import { heroStatement } from '../../data/site';
+import { hero, heroStats, presence } from '../../data/site';
 
 interface Props {
   scrollHeight?: number;
@@ -15,18 +15,17 @@ interface Props {
   mobileImage?: string;
   initialClipPercentage?: number;
   finalClipPercentage?: number;
-  statementLine1?: string;
-  statementLine2?: string;
+  /** Set true to render the title in azul cerúleo (client A/B request). */
+  titleInAzul?: boolean;
 }
 
 const {
   scrollHeight = 800,
-  desktopImage = '/images/hero/hero-interior-07.webp',
+  desktopImage = '/images/hero/hero-desktop.webp',
   mobileImage = '/images/hero/hero-mobile.webp',
   initialClipPercentage = 25,
   finalClipPercentage = 75,
-  statementLine1 = heroStatement.line1,
-  statementLine2 = heroStatement.line2,
+  titleInAzul = false,
 } = Astro.props;
 ---
 
@@ -37,6 +36,12 @@ const {
   mobileImage={mobileImage}
   initialClipPercentage={initialClipPercentage}
   finalClipPercentage={finalClipPercentage}
-  statementLine1={statementLine1}
-  statementLine2={statementLine2}
+  title={hero.title}
+  subtitle={hero.subtitle}
+  ctas={hero.ctas}
+  stats={heroStats}
+  presenceLabel={presence.label}
+  presenceCities={presence.cities}
+  presenceSuffix={presence.suffix}
+  titleInAzul={titleInAzul}
 />

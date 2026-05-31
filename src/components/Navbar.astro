@@ -171,6 +171,7 @@ const { theme = 'dark' } = Astro.props;
   [data-navbar] [data-logo-wrap] img {
     transition:
       transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 500ms cubic-bezier(0.22, 1, 0.36, 1),
       height 500ms cubic-bezier(0.22, 1, 0.36, 1) !important;
     height: 56px !important;
   }
@@ -181,5 +182,13 @@ const { theme = 'dark' } = Astro.props;
   }
   [data-navbar][data-scrolled="true"] [data-logo-wrap] img {
     height: 32px !important;
+  }
+
+  /* Playful "tickle" on hover — mirrors Logo.astro's group-hover:-rotate-[3deg].
+     Defined here on the wrapper because the navbar stacks two logos that
+     cross-fade on scroll; the invisible (opacity-0) overlay logo sits on top
+     and would otherwise intercept the hover, so the visible logo never tilted. */
+  [data-navbar] [data-logo-wrap]:hover img {
+    rotate: -3deg;
   }
 </style>

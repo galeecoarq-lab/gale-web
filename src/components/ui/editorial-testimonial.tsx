@@ -15,6 +15,16 @@ interface Props {
   autoplayMs?: number;
 }
 
+/** Initials fallback for testimonials without a photo yet. */
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+
 export default function EditorialTestimonial({ testimonials, autoplayMs }: Props) {
   const [active, setActive] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -97,12 +107,22 @@ export default function EditorialTestimonial({ testimonials, autoplayMs }: Props
             </span>
             <div className="flex items-center gap-4">
               <div className="relative w-12 h-12 shrink-0 rounded-full overflow-hidden ring-2 ring-[color-mix(in_oklab,var(--color-negro)_10%,transparent)] group-hover:ring-[color-mix(in_oklab,var(--color-negro)_30%,transparent)] transition-all duration-300">
-                <img
-                  src={current.image}
-                  alt={current.author}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                />
+                {current.image ? (
+                  <img
+                    src={current.image}
+                    alt={current.author}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-[var(--color-azul)] text-sm font-medium tracking-wide text-[var(--color-cultivado)]"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                    aria-hidden="true"
+                  >
+                    {initials(current.author)}
+                  </div>
+                )}
               </div>
               <div>
                 <p className="font-medium text-[var(--color-negro)]">{current.author}</p>

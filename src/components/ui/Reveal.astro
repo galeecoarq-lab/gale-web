@@ -10,11 +10,13 @@ interface Props {
   delay?: 0 | 100 | 200 | 300 | 400 | 500;
   as?: keyof HTMLElementTagNameMap;
   class?: string;
+  /** Any extra attributes (data-*, id, aria-*) are forwarded to the element. */
+  [key: string]: unknown;
 }
 
-const { delay = 0, as: Tag = 'div', class: className = '' } = Astro.props;
+const { delay = 0, as: Tag = 'div', class: className = '', ...rest } = Astro.props;
 ---
 
-<Tag class={`reveal ${className}`} data-delay={delay > 0 ? delay : undefined}>
+<Tag class={`reveal ${className}`} data-delay={delay > 0 ? delay : undefined} {...rest}>
   <slot />
 </Tag>

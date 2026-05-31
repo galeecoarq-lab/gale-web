@@ -4,7 +4,10 @@ import { cn } from "@/lib/utils";
 export interface GalleryItem {
   src: string;
   alt: string;
-  caption?: string;
+  /** Project name. */
+  title: string;
+  /** Secondary line, e.g. "Panadería y restaurante · Jaén". */
+  meta?: string;
 }
 
 export interface ImageGalleryProps {
@@ -23,6 +26,16 @@ export default function ImageGallery({
   className,
 }: ImageGalleryProps) {
   const [preview, setPreview] = useState<GalleryItem | null>(null);
+  const [isTouch, setIsTouch] = useState(false);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover)");
+    const update = () => setIsTouch(!mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (!preview) return;
@@ -40,121 +53,142 @@ export default function ImageGallery({
 
   return (
     <section
-      className={cn(
-        "w-full flex flex-col items-center justify-start",
-        className,
-      )}
+      className={cn("w-full flex flex-col items-center justify-start", className)}
     >
       <div className="max-w-3xl text-center px-4">
         {eyebrow ? (
-          <span className="eyebrow text-[var(--color-niebla)]">{eyebrow}</span>
+          <span className="eyebrow text-[var(--color-azul)]">{eyebrow}</span>
         ) : null}
         <h2 className="display-xl text-balance mt-4">{title}</h2>
         {description ? (
-          <p className="mt-5 text-sm md:text-base leading-relaxed text-[var(--color-niebla)]">
+          <p className="mt-5 text-sm md:text-base leading-relaxed text-[var(--color-grafito)] text-pretty">
             {description}
           </p>
         ) : null}
       </div>
 
-      <div className="hidden md:flex items-center gap-2 h-[400px] w-full max-w-6xl mt-12 px-4">
-        {items.map((item, idx) => (
-          <div
-            key={`${item.src}-${idx}`}
-            className="relative group flex-grow transition-all w-56 rounded-sm overflow-hidden h-[400px] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:w-full"
-          >
-            <img
-              className="h-full w-full object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
-              src={item.src}
-              alt={item.alt}
-              loading="lazy"
-              decoding="async"
-            />
+      {/* Horizontal accordion — md+ only. Expands on hover (pointer) or tap (touch). */}
+      <div className="hidden md:flex items-stretch gap-2 h-[440px] w-full max-w-6xl mt-12 px-4">
+        {items.map((item, idx) => {
+          const isActive = activeIdx === idx;
+          return (
             <div
-              className="absolute inset-0 bg-gradient-to-t from-[var(--color-negro)]/60 via-[var(--color-negro)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-              aria-hidden="true"
-            />
-            {item.caption ? (
+              key={`h-${idx}`}
+              onClick={isTouch ? () => setActiveIdx(isActive ? null : idx) : undefined}
+              className={cn(
+                "relative group flex-grow transition-all w-56 rounded-md overflow-hidden h-full duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                !isTouch && "hover:w-full",
+                isTouch && "cursor-pointer",
+                isActive && "w-full"
+              )}
+            >
+              <img
+                className={cn(
+                  "h-full w-full object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105",
+                  isActive && "scale-105"
+                )}
+                src={item.src}
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+              />
+              <div
+                className={cn(
+                  "absolute inset-0 bg-gradient-to-t from-[var(--color-negro)]/80 via-[var(--color-negro)]/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+                  isActive && "opacity-100"
+                )}
+                aria-hidden="true"
+              />
               <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
-                <p className="text-[var(--color-cultivado)] text-lg md:text-xl font-medium tracking-wide opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)] whitespace-nowrap">
-                  {item.caption}
-                </p>
+                <div
+                  className={cn(
+                    "opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    isActive && "opacity-100 translate-y-0"
+                  )}
+                >
+                  <p
+                    className="text-[var(--color-cultivado)] text-xl md:text-2xl font-medium tracking-tight whitespace-nowrap"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {item.title}
+                  </p>
+                  {item.meta ? (
+                    <p className="mt-1 text-[var(--color-cultivado)]/75 text-xs uppercase tracking-[0.16em] whitespace-nowrap">
+                      {item.meta}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            ) : null}
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
 
-      <div className="md:hidden flex gap-2 w-full mt-10 px-4">
-        <div className="flex-1 flex flex-col gap-2">
-          {items.filter((_, i) => i % 2 === 0).map((item, idx) => (
-            <button
-              type="button"
-              key={`mobile-a-${item.src}-${idx}`}
-              onClick={() => setPreview(item)}
-              className="relative aspect-[4/5] rounded-sm overflow-hidden block w-full text-left cursor-zoom-in"
-              aria-label={`Ver ${item.alt} a pantalla completa`}
+      {/* Vertical accordion — mobile only. Same flex-grow mechanic, rotated 90°.
+          flex-basis: 0 means all height comes from flex-grow, so the ratio is
+          exact: active item gets 5 shares, each collapsed item gets 1 share. */}
+      <div className="flex md:hidden flex-col h-[480px] gap-2 w-full px-4 mt-10">
+        {items.map((item, idx) => {
+          const isActive = activeIdx === idx;
+          return (
+            <div
+              key={`v-${idx}`}
+              onClick={() => setActiveIdx(isActive ? null : idx)}
+              className={cn(
+                "relative basis-0 overflow-hidden rounded-md cursor-pointer",
+                "transition-[flex-grow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                isActive ? "[flex-grow:5]" : "[flex-grow:1]"
+              )}
             >
               <img
-                className="h-full w-full object-cover object-center"
+                className={cn(
+                  "h-full w-full object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  isActive && "scale-105"
+                )}
                 src={item.src}
                 alt={item.alt}
                 loading="lazy"
                 decoding="async"
               />
-              {item.caption ? (
-                <>
-                  <div
-                    className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--color-negro)]/80 to-transparent pointer-events-none"
-                    aria-hidden="true"
-                  />
-                  <p className="absolute bottom-0 left-0 right-0 px-3 pb-2 text-[var(--color-cultivado)] text-xs font-medium tracking-wide pointer-events-none">
-                    {item.caption}
-                  </p>
-                </>
-              ) : null}
-            </button>
-          ))}
-        </div>
-        <div className="flex-1 flex flex-col gap-2 mt-12">
-          {items.filter((_, i) => i % 2 === 1).map((item, idx) => (
-            <button
-              type="button"
-              key={`mobile-b-${item.src}-${idx}`}
-              onClick={() => setPreview(item)}
-              className="relative aspect-[4/5] rounded-sm overflow-hidden block w-full text-left cursor-zoom-in"
-              aria-label={`Ver ${item.alt} a pantalla completa`}
-            >
-              <img
-                className="h-full w-full object-cover object-center"
-                src={item.src}
-                alt={item.alt}
-                loading="lazy"
-                decoding="async"
+              <div
+                className={cn(
+                  "absolute inset-0 bg-gradient-to-t from-[var(--color-negro)]/80 via-[var(--color-negro)]/15 to-transparent opacity-0 transition-opacity duration-500 pointer-events-none",
+                  isActive && "opacity-100"
+                )}
+                aria-hidden="true"
               />
-              {item.caption ? (
-                <>
-                  <div
-                    className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--color-negro)]/80 to-transparent pointer-events-none"
-                    aria-hidden="true"
-                  />
-                  <p className="absolute bottom-0 left-0 right-0 px-3 pb-2 text-[var(--color-cultivado)] text-xs font-medium tracking-wide pointer-events-none">
-                    {item.caption}
+              <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                <div
+                  className={cn(
+                    "opacity-0 translate-y-2 transition-all duration-500 delay-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                    isActive && "opacity-100 translate-y-0"
+                  )}
+                >
+                  <p
+                    className="text-[var(--color-cultivado)] text-lg font-medium tracking-tight"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {item.title}
                   </p>
-                </>
-              ) : null}
-            </button>
-          ))}
-        </div>
+                  {item.meta ? (
+                    <p className="mt-0.5 text-[var(--color-cultivado)]/75 text-xs uppercase tracking-[0.14em]">
+                      {item.meta}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {preview ? (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={preview.alt}
+          aria-label={preview.title}
           onClick={() => setPreview(null)}
-          className="md:hidden fixed inset-0 z-50 bg-[var(--color-negro)]/95 flex items-center justify-center animate-[fade-in_200ms_ease-out] cursor-zoom-out"
+          className="fixed inset-0 z-50 bg-[var(--color-negro)]/95 flex items-center justify-center animate-[fade-in_200ms_ease-out] cursor-zoom-out"
         >
           <button
             type="button"
@@ -170,13 +204,21 @@ export default function ImageGallery({
           <img
             src={preview.src}
             alt={preview.alt}
-            className="max-h-[90vh] max-w-[95vw] object-contain"
+            className="max-h-[82vh] max-w-[95vw] object-contain"
           />
-          {preview.caption ? (
-            <p className="absolute bottom-6 left-0 right-0 text-center text-[var(--color-cultivado)] text-sm font-medium tracking-wide px-6">
-              {preview.caption}
+          <div className="absolute bottom-7 left-0 right-0 text-center px-6">
+            <p
+              className="text-[var(--color-cultivado)] text-lg font-medium tracking-tight"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {preview.title}
             </p>
-          ) : null}
+            {preview.meta ? (
+              <p className="mt-1 text-[var(--color-cultivado)]/75 text-xs uppercase tracking-[0.16em]">
+                {preview.meta}
+              </p>
+            ) : null}
+          </div>
         </div>
       ) : null}
     </section>

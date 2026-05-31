@@ -1,0 +1,26 @@
+---
+/**
+ * "Proyectos destacados" — visual collection of recent work. Sits right after
+ * the hero so prospective clients see the studio's work immediately.
+ * Light section for relief after the dark hero; the project images pop.
+ */
+import ImageGallery from '../ui/image-gallery.tsx';
+import { featuredProjects } from '../../data/site';
+
+const items = featuredProjects.map((p) => ({
+  src: p.image,
+  alt: `${p.title} — ${p.location}`,
+  title: p.title,
+  meta: `${p.subtitle} · ${p.location}`,
+}));
+---
+
+<section id="proyectos" class="section bg-[var(--color-cultivado)] text-[var(--color-negro)] relative overflow-hidden">
+  <ImageGallery
+    client:visible
+    eyebrow="Proyectos destacados"
+    title="Una colección visual de nuestros trabajos."
+    description="Cada proyecto diseñado de manera personalizada, cuidando la identidad, el propósito y la esencia de cada espacio."
+    items={items}
+  />
+</section>

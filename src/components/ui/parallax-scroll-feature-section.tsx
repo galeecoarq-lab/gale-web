@@ -33,7 +33,7 @@ const ParallaxScrollFeatureSection = ({
 }: Props) => {
     return (
         <section
-            id="proceso-parallax"
+            id="proceso"
             className="relative w-full bg-white text-[var(--color-negro)]"
         >
             {/* Top fade: bleeds the cream from the section above into this
@@ -118,7 +118,7 @@ const FeatureRow = ({ section, index }: FeatureRowProps) => {
     return (
         <div
             ref={ref}
-            className={`flex flex-col md:flex-row items-center justify-center md:gap-24 gap-10 py-12 md:py-16 ${
+            className={`relative flex flex-col md:flex-row items-center justify-center md:gap-24 gap-10 py-12 md:py-16 ${
                 section.reverse ? "md:flex-row-reverse" : ""
             }`}
         >

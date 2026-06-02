@@ -147,7 +147,7 @@ const FeatureRow = ({ section, index }: FeatureRowProps) => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-80px 0px" }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
-                    className="mt-8 text-base leading-relaxed text-[var(--color-negro)]/70 after:content-[''] after:block after:clear-both"
+                    className="mt-8 after:content-[''] after:block after:clear-both"
                 >
                     {section.spriteUrl && (
                         <SpriteMedia
@@ -155,7 +155,9 @@ const FeatureRow = ({ section, index }: FeatureRowProps) => {
                             spriteVideoUrl={section.spriteVideoUrl}
                         />
                     )}
-                    {section.description}
+                    <p className="text-base leading-relaxed text-[var(--color-negro)]/70">
+                        {section.description}
+                    </p>
                 </motion.div>
             </motion.div>
             <motion.div

@@ -120,7 +120,7 @@ export const featuredProjects = [
     image: '/images/projects/salud-coa-jaen/foto-04.webp',
   },
   {
-    title: 'Finca La Colpa',
+    title: 'Finca La Colpia',
     subtitle: 'Turístico',
     location: 'San Ignacio, Cajamarca',
     image: '/images/projects/turistico-lacolpa-sanignacio/foto-06.webp',

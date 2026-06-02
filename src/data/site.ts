@@ -168,28 +168,28 @@ export const sectors = [
 export const process = [
   {
     step: '01',
-    title: 'Reunión inicial',
-    description: 'Entendemos objetivos y necesidades.',
+    title: 'Consultoría inicial',
+    description: 'Analizamos el espacio, las necesidades y los objetivos del proyecto.',
   },
   {
     step: '02',
-    title: 'Levantamiento',
+    title: 'Levantamiento de información',
     description: 'Medición y análisis.',
   },
   {
     step: '03',
-    title: 'Diseño conceptual',
-    description: 'Propuesta espacial y visual.',
+    title: 'Diseño Conceptual',
+    description: 'Definimos la identidad visual y la experiencia espacial del proyecto.',
   },
   {
     step: '04',
     title: 'Desarrollo técnico',
-    description: 'Planimetría y especialidades.',
+    description: 'Convertimos el diseño en información técnica lista para construir.',
   },
   {
     step: '05',
     title: 'Ejecución y supervisión',
-    description: 'Acompañamiento del proyecto hasta verlo finalizado.',
+    description: 'Acompañamos la materialización del proyecto para garantizar calidad y coherencia.',
   },
 ];
 

@@ -202,7 +202,7 @@ export const process = [
     step: '05',
     title: 'Ejecución y supervisión',
     description: 'Acompañamos la materialización del proyecto para garantizar calidad y coherencia: supervisión técnica, coordinación con proveedores, control de acabados, seguimiento de obra y proyecto construido.',
-    image: '/images/highlights/ejecución-y-supervición.webp',
+    image: '/images/highlights/ejecucion-y-supervicion.webp',
     spriteImage: '/images/team/person-2.png',
     spriteVideo: '/images/team/person-2-wave-nobg.webm',
   },

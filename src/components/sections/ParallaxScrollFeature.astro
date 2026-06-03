@@ -8,40 +8,13 @@
 import { process } from '../../data/site';
 import ParallaxScrollFeatureSection from '../ui/parallax-scroll-feature-section.tsx';
 
-const sampleImages = [
-  '/images/highlights/escuchamos.webp',
-  '/images/highlights/imaginamos.webp',
-  '/images/highlights/diseñamos.webp',
-  '/images/highlights/contruir.webp',
-  '/images/projects/obras.webp',
-];
-
-// Only 4 team figures exist; the 5th step reuses one until a 5th is provided.
-const teamSprites = [
-  '/images/team/person-1.png',
-  '/images/team/person-2.png',
-  '/images/team/person-3.png',
-  '/images/team/person-4.png',
-  '/images/team/person-2.png',
-];
-
-// Each person has a paired wave video; the still PNG is used as the poster
-// so the image shows until the clip buffers.
-const teamSpriteVideos = [
-  '/images/team/person-1-wave-nobg.webm',
-  '/images/team/person-2-wave-nobg.webm',
-  '/images/team/person-3-wave-nobg.webm',
-  '/images/team/person-4-wave-nobg.webm',
-  '/images/team/person-2-wave-nobg.webm',
-];
-
 const sections = process.map((step, idx) => ({
   id: step.step,
   title: step.title,
   description: step.description,
-  imageUrl: sampleImages[idx % sampleImages.length],
-  spriteUrl: teamSprites[idx % teamSprites.length],
-  spriteVideoUrl: teamSpriteVideos[idx % teamSpriteVideos.length],
+  imageUrl: step.image,
+  spriteUrl: step.spriteImage,
+  spriteVideoUrl: step.spriteVideo,
   reverse: idx % 2 === 1,
 }));
 ---

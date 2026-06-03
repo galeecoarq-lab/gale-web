@@ -155,7 +155,7 @@ export const serviceGroups = [
 /* ── Rubros (carrusel visual) ────────────────────────────── */
 
 export const sectors = [
-  { title: 'Comercial',   image: '/images/projects/casita-del-pan.webp' },
+  { title: 'Comercial',   image: '/images/projects/comercial.webp' },
   { title: 'Residencial', image: '/images/projects/residencial-lambayeque.webp'   },
   { title: 'Salud',       image: '/images/projects/salud-coa-jaen.webp'        },
   { title: 'Corporativo', image: '/images/projects/corporativo-hcm-jaen.webp'        },
@@ -170,26 +170,41 @@ export const process = [
     step: '01',
     title: 'Consultoría inicial',
     description: 'Analizamos el espacio, las necesidades y los objetivos del proyecto mediante reunión inicial, visita técnica e identificación de necesidades operativas y comerciales.',
+    image: '/images/highlights/consultoria-inicial.webp',
+    spriteImage: '/images/team/person-1.png',
+    spriteVideo: '/images/team/person-1-wave-nobg.webm',
   },
   {
     step: '02',
     title: 'Levantamiento de información',
     description: 'Recopilamos toda la información del espacio mediante levantamiento arquitectónico y registro fotográfico.',
+    image: '/images/highlights/lecantamiento-informacion.webp',
+    spriteImage: '/images/team/person-2.png',
+    spriteVideo: '/images/team/person-2-wave-nobg.webm',
   },
   {
     step: '03',
     title: 'Diseño Conceptual',
     description: 'Definimos la identidad visual y la experiencia espacial del proyecto: concepto de diseño, paleta de materiales, colores, referencias visuales y primeras visualizaciones.',
+    image: '/images/highlights/diseno-conceptual.webp',
+    spriteImage: '/images/team/person-3.png',
+    spriteVideo: '/images/team/person-3-wave-nobg.webm',
   },
   {
     step: '04',
     title: 'Desarrollo técnico',
     description: 'Convertimos el diseño en información técnica lista para construir: arquitectura, interiores, mobiliario, iluminación, electricidad, instalaciones sanitarias y detalles constructivos.',
+    image: '/images/highlights/desarrollo-tecnico.webp',
+    spriteImage: '/images/team/person-4.png',
+    spriteVideo: '/images/team/person-4-wave-nobg.webm',
   },
   {
     step: '05',
     title: 'Ejecución y supervisión',
     description: 'Acompañamos la materialización del proyecto para garantizar calidad y coherencia: supervisión técnica, coordinación con proveedores, control de acabados, seguimiento de obra y proyecto construido.',
+    image: '/images/highlights/ejecución-y-supervición.webp',
+    spriteImage: '/images/team/person-2.png',
+    spriteVideo: '/images/team/person-2-wave-nobg.webm',
   },
 ];
 

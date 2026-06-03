@@ -24,7 +24,17 @@ const { items = sectors } = Astro.props;
   {/* The transition into the next section is now handled by that section's
       own top fade (cream → white), so no bottom fade is needed here. */}
   <div class="sectors-sticky">
-    <div class="sectors-inner">
+    <!-- Background sprite: pinned to the far right, behind all content -->
+    <div class="pointer-events-none absolute inset-y-0 right-30 z-0 hidden md:flex items-end" aria-hidden="true">
+      <img
+        src="/images/sprites/sprit-05.png"
+        alt=""
+        class="h-[100vh] w-auto opacity-50 [transform:scaleX(-1)]"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="sectors-inner relative z-10">
       <div class="container-wide">
         <div class="flex items-end gap-6 lg:gap-10 mb-8 lg:mb-10">
           <div class="max-w-2xl">
@@ -33,15 +43,6 @@ const { items = sectors } = Astro.props;
               Diseñamos para cada<br />tipo de proyecto.
             </Reveal>
           </div>
-          <Reveal delay={150} class="hidden md:block shrink-0 ml-auto -mr-[clamp(1.25rem,4vw,3rem)]">
-            <img
-              src="/images/sprites/sprit-03.png"
-              alt=""
-              class="w-40 lg:w-56 xl:w-64 h-auto -scale-x-100"
-              loading="lazy"
-              decoding="async"
-            />
-          </Reveal>
         </div>
       </div>
 

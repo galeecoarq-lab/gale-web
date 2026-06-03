@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
 import { site } from '../data/site';
 
 interface Props {
@@ -9,13 +10,24 @@ interface Props {
   description?: string;
   /** Set to "dark" when the page opens on a dark hero so navbar reads correctly. */
   navTheme?: 'light' | 'dark';
+  /** Social-share image (Open Graph / Twitter). Path relative to the site root. */
+  image?: string;
+  /** Set true to keep a page out of search results (e.g. thank-you pages). */
+  noindex?: boolean;
 }
 
 const {
   title = `${site.name} — ${site.tagline}`,
   description = site.description,
   navTheme = 'dark',
+  image = '/images/og/og-default.jpg',
+  noindex = false,
 } = Astro.props;
+
+/* Absolute URLs — required for canonical, Open Graph and Twitter to resolve
+   correctly. `Astro.site` comes from the `site` option in astro.config.mjs. */
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageURL = new URL(image, Astro.site).href;
 ---
 
 <!doctype html>
@@ -38,7 +50,9 @@ const {
     </script>
     <meta name="theme-color" content="#141B23" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     {/* Fonts: Montserrat (body) + Comfortaa (display) */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,13 +69,42 @@ const {
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta
+      name="robots"
+      content={noindex
+        ? 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    <meta name="author" content={site.longName} />
+
+    {/* Geo (SEO local — norte del Perú) */}
+    <meta name="geo.region" content="PE" />
+    <meta name="geo.placename" content="Norte del Perú" />
 
     {/* Open Graph */}
+    <meta property="og:site_name" content={site.longName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/images/hero/hero-fachada.webp" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="es_PE" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:secure_url" content={ogImageURL} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.longName} />
+
+    {/* Twitter */}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={site.longName} />
+
+    {/* Structured data (schema.org JSON-LD) */}
+    <StructuredData />
   </head>
 
   <body class="bg-[var(--color-cultivado)] text-[var(--color-negro)] antialiased">

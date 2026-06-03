@@ -11,8 +11,8 @@ export const site = {
   /* Cierre / "apartado final" del PDF — también sirve de meta description. */
   description:
     'Somos un estudio de arquitectura de interiores y ejecución de proyectos, enfocado en desarrollar espacios comerciales y residenciales. Buscamos la funcionalidad, la estética, la identidad y la sensibilidad en cada proyecto.',
-  url: 'https://gale.pe',
-  email: 'contacto@gale.pe',
+  url: 'https://galearquitectura.pe',
+  email: 'contacto@galearquitectura.pe',
   phone: '+51 942 802 551',
   /* Número en formato internacional sin símbolos, para los enlaces de WhatsApp. */
   whatsapp: '51942802551',

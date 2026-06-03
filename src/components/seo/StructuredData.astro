@@ -1,0 +1,112 @@
+---
+/**
+ * JSON-LD structured data (schema.org) for GALE.
+ *
+ * Emits a single @graph that describes the studio as a local
+ * ProfessionalService plus the WebSite/WebPage it lives on. This is what lets
+ * Google show rich results AND what AI assistants (ChatGPT, Claude, Perplexity,
+ * Gemini) read to understand and cite who GALE is, what it does and where.
+ *
+ * All facts derive from `site.ts`, so the markup never drifts from the copy.
+ */
+import { site, presence, serviceGroups } from '../../data/site';
+
+const origin = site.url; // https://galearquitectura.pe
+const logoUrl = `${origin}/images/brand/logo-blue.webp`;
+const ogImageUrl = `${origin}/images/og/og-default.jpg`;
+const phoneE164 = `+${site.whatsapp}`; // +51942802551
+
+const organization = {
+  '@type': 'ProfessionalService',
+  '@id': `${origin}/#organization`,
+  name: site.longName,
+  alternateName: site.name,
+  description: site.description,
+  url: origin,
+  email: site.email,
+  telephone: phoneE164,
+  image: ogImageUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: logoUrl,
+    width: 1200,
+    height: 1003,
+  },
+  slogan: site.tagline,
+  priceRange: '$$$',
+  address: {
+    '@type': 'PostalAddress',
+    addressRegion: 'Norte del Perú',
+    addressCountry: 'PE',
+  },
+  areaServed: [
+    { '@type': 'Country', name: 'Perú' },
+    ...presence.cities.map((city) => ({ '@type': 'City', name: city })),
+  ],
+  knowsAbout: [
+    'Arquitectura',
+    'Arquitectura de interiores',
+    'Diseño de interiores',
+    'Ejecución de obra',
+    'Supervisión de obra',
+    'Expedientes técnicos',
+    'Diseño de espacios comerciales',
+    'Diseño de espacios residenciales',
+    'Consultoría arquitectónica',
+  ],
+  sameAs: [site.social.instagram, site.social.tiktok, site.social.linkedin],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: phoneE164,
+    email: site.email,
+    contactType: 'customer service',
+    areaServed: 'PE',
+    availableLanguage: ['es'],
+  },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Servicios de GALE',
+    itemListElement: serviceGroups.map((group) => ({
+      '@type': 'OfferCatalog',
+      name: group.title,
+      description: group.summary,
+      itemListElement: group.items.map((item) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: item },
+      })),
+    })),
+  },
+};
+
+const website = {
+  '@type': 'WebSite',
+  '@id': `${origin}/#website`,
+  url: origin,
+  name: site.longName,
+  description: site.description,
+  inLanguage: 'es-PE',
+  publisher: { '@id': `${origin}/#organization` },
+};
+
+const webpage = {
+  '@type': 'WebPage',
+  '@id': `${origin}/#webpage`,
+  url: `${origin}/`,
+  name: `${site.name} — ${site.tagline}`,
+  description: site.description,
+  isPartOf: { '@id': `${origin}/#website` },
+  about: { '@id': `${origin}/#organization` },
+  primaryImageOfPage: ogImageUrl,
+  inLanguage: 'es-PE',
+};
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [organization, website, webpage],
+};
+
+// Escape `<` so a stray "</script>" in data can never break out of the tag.
+const json = JSON.stringify(schema).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" set:html={json} is:inline />

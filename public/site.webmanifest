@@ -1,0 +1,16 @@
+{
+  "name": "GALE — Gale Eco Arquitectura",
+  "short_name": "GALE",
+  "description": "Estudio de arquitectura, interiorismo y ejecución de proyectos en el norte del Perú.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F6F4",
+  "theme_color": "#141B23",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

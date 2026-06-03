@@ -222,6 +222,7 @@ const SpriteMedia = ({ spriteUrl, spriteVideoUrl }: SpriteMediaProps) => {
                 <img
                     src={stillSrc}
                     loading="lazy"
+                    alt=""
                     aria-hidden="true"
                     className={`${baseClasses} sprite-ios-still`}
                 />
@@ -232,6 +233,7 @@ const SpriteMedia = ({ spriteUrl, spriteVideoUrl }: SpriteMediaProps) => {
     return (
         <img
             src={spriteUrl}
+            alt=""
             aria-hidden="true"
             className={baseClasses}
         />
